@@ -1,0 +1,207 @@
+// monument
+
+@font-face {
+  src: url("../assets/fonts/MonumentExtended-Ultralight.otf") format("opentype");
+  font-family: "Monument";
+  font-weight: 300;
+}
+
+@font-face {
+  src: url("../assets/fonts/MonumentExtended-Regular.otf") format("opentype");
+  font-family: "Monument";
+  font-weight: normal;
+}
+
+@font-face {
+  src: url("../assets/fonts/MonumentExtended-Bold.otf") format("opentype");
+  font-family: "Monument";
+  font-weight: bold;
+}
+
+@font-face {
+  src: url("../assets/fonts/MonumentExtended-Ultrabold.otf") format("opentype");
+  font-family: "Monument";
+  font-weight: 700;
+  font-style: normal;
+}
+
+// bw gradial
+
+@font-face {
+  src: url("../assets/fonts/bw-gradual/woff/BwGradual-Thin.woff") format("woff"),
+    url("../assets/fonts/bw-gradual/woff2/BwGradual-Thin.woff2") format("woff2"),
+    url("../assets/fonts/bw-gradual/otf/BwGradual-Thin.otf") format("opentype"),
+    url("../assets/fonts/bw-gradual/eot/BwGradual-Thin.eot") format("eot");
+  font-family: "Bw";
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  src: url("../assets/fonts/bw-gradual/woff/BwGradual-ThinItalic.woff")
+      format("woff"),
+    url("../assets/fonts/bw-gradual/woff2/BwGradual-ThinItalic.woff2")
+      format("woff2"),
+    url("../assets/fonts/bw-gradual/otf/BwGradual-ThinItalic.otf")
+      format("opentype"),
+    url("../assets/fonts/bw-gradual/eot/BwGradual-ThinItalic.eot") format("eot");
+  font-family: "Bw";
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  src: url("../assets/fonts/bw-gradual/woff/BwGradual-Light.woff")
+      format("woff"),
+    url("../assets/fonts/bw-gradual/woff2/BwGradual-Light.woff2")
+      format("woff2"),
+    url("../assets/fonts/bw-gradual/otf/BwGradual-Light.otf") format("opentype"),
+    url("../assets/fonts/bw-gradual/eot/BwGradual-Light.eot") format("eot");
+  font-family: "Bw";
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  src: url("../assets/fonts/bw-gradual/woff/BwGradual-LightItalic.woff")
+      format("woff"),
+    url("../assets/fonts/bw-gradual/woff2/BwGradual-LightItalic.woff2")
+      format("woff2"),
+    url("../assets/fonts/bw-gradual/otf/BwGradual-LightItalic.otf")
+      format("opentype"),
+    url("../assets/fonts/bw-gradual/eot/BwGradual-LightItalic.eot")
+      format("eot");
+  font-family: "Bw";
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  src: url("../assets/fonts/bw-gradual/woff/BwGradual-Regular.woff")
+      format("woff"),
+    url("../assets/fonts/bw-gradual/woff2/BwGradual-Regular.woff2")
+      format("woff2"),
+    url("../assets/fonts/bw-gradual/otf/BwGradual-Regular.otf")
+      format("opentype"),
+    url("../assets/fonts/bw-gradual/eot/BwGradual-Regular.eot") format("eot");
+  font-family: "Bw";
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  src: url("../assets/fonts/bw-gradual/woff/BwGradual-RegularItalic.woff")
+      format("woff"),
+    url("../assets/fonts/bw-gradual/woff2/BwGradual-RegularItalic.woff2")
+      format("woff2"),
+    url("../assets/fonts/bw-gradual/otf/BwGradual-RegularItalic.otf")
+      format("opentype"),
+    url("../assets/fonts/bw-gradual/eot/BwGradual-RegularItalic.eot")
+      format("eot");
+  font-family: "Bw";
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  src: url("../assets/fonts/bw-gradual/woff/BwGradual-Medium.woff")
+      format("woff"),
+    url("../assets/fonts/bw-gradual/woff2/BwGradual-Medium.woff2")
+      format("woff2"),
+    url("../assets/fonts/bw-gradual/otf/BwGradual-Medium.otf")
+      format("opentype"),
+    url("../assets/fonts/bw-gradual/eot/BwGradual-Medium.eot") format("eot");
+  font-family: "Bw";
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  src: url("../assets/fonts/bw-gradual/woff/BwGradual-MediumItalic.woff")
+      format("woff"),
+    url("../assets/fonts/bw-gradual/woff2/BwGradual-MediumItalic.woff2")
+      format("woff2"),
+    url("../assets/fonts/bw-gradual/otf/BwGradual-MediumItalic.otf")
+      format("opentype"),
+    url("../assets/fonts/bw-gradual/eot/BwGradual-MediumItalic.eot")
+      format("eot");
+  font-family: "Bw";
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  src: url("../assets/fonts/bw-gradual/woff/BwGradual-Bold.woff") format("woff"),
+    url("../assets/fonts/bw-gradual/woff2/BwGradual-Bold.woff2") format("woff2"),
+    url("../assets/fonts/bw-gradual/otf/BwGradual-Bold.otf") format("opentype"),
+    url("../assets/fonts/bw-gradual/eot/BwGradual-Bold.eot") format("eot");
+  font-family: "Bw";
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  src: url("../assets/fonts/bw-gradual/woff/BwGradual-BoldItalic.woff")
+      format("woff"),
+    url("../assets/fonts/bw-gradual/woff2/BwGradual-BoldItalic.woff2")
+      format("woff2"),
+    url("../assets/fonts/bw-gradual/otf/BwGradual-BoldItalic.otf")
+      format("opentype"),
+    url("../assets/fonts/bw-gradual/eot/BwGradual-BoldItalic.eot") format("eot");
+  font-family: "Bw";
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  src: url("../assets/fonts/bw-gradual/woff/BwGradual-ExtraBold.woff")
+      format("woff"),
+    url("../assets/fonts/bw-gradual/woff2/BwGradual-ExtraBold.woff2")
+      format("woff2"),
+    url("../assets/fonts/bw-gradual/otf/BwGradual-ExtraBold.otf")
+      format("opentype"),
+    url("../assets/fonts/bw-gradual/eot/BwGradual-ExtraBold.eot") format("eot");
+  font-family: "Bw";
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  src: url("../assets/fonts/bw-gradual/woff/BwGradual-ExtraBoldItalic.woff")
+      format("woff"),
+    url("../assets/fonts/bw-gradual/woff2/BwGradual-ExtraBoldItalic.woff2")
+      format("woff2"),
+    url("../assets/fonts/bw-gradual/otf/BwGradual-ExtraBoldItalic.otf")
+      format("opentype"),
+    url("../assets/fonts/bw-gradual/eot/BwGradual-ExtraBoldItalic.eot")
+      format("eot");
+  font-family: "Bw";
+  font-weight: 800;
+  font-style: italic;
+}
+
+@font-face {
+  src: url("../assets/fonts/bw-gradual/woff/BwGradual-Black.woff")
+      format("woff"),
+    url("../assets/fonts/bw-gradual/woff2/BwGradual-Black.woff2")
+      format("woff2"),
+    url("../assets/fonts/bw-gradual/otf/BwGradual-Black.otf") format("opentype"),
+    url("../assets/fonts/bw-gradual/eot/BwGradual-Black.eot") format("eot");
+  font-family: "Bw";
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  src: url("../assets/fonts/bw-gradual/woff/BwGradual-BlackItalic.woff")
+      format("woff"),
+    url("../assets/fonts/bw-gradual/woff2/BwGradual-BlackItalic.woff2")
+      format("woff2"),
+    url("../assets/fonts/bw-gradual/otf/BwGradual-BlackItalic.otf")
+      format("opentype"),
+    url("../assets/fonts/bw-gradual/eot/BwGradual-BlackItalic.eot")
+      format("eot");
+  font-family: "Bw";
+  font-weight: 900;
+  font-style: italic;
+}
