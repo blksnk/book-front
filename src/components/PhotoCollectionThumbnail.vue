@@ -1,12 +1,10 @@
 <template>
   <article
     class="photo-collection-thumbnail"
-    :style="{
-      backgroundImage: `url(${src})`
-    }"
     @click="e => onClick(id)"
     @mouseover="e => onHover(index)"
   >
+    <img :src="src" alt="" />
     <h3>{{ name }}</h3>
   </article>
 </template>
@@ -41,7 +39,6 @@ export default {
 .photo-collection-thumbnail {
   width: 100%;
   height: calc((100vh - 10rem) / 2);
-  z-index: 2;
   background-position: center;
   background-size: cover;
   padding: 2rem;
@@ -53,6 +50,17 @@ export default {
   cursor: pointer;
   box-shadow: 0.5rem 0 2rem rgba(0, 0, 0, 0.5);
   border-radius: var(--border-radius);
+  position: relative;
+}
+
+.photo-collection-thumbnail img {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
 }
 
 .photo-collection-thumbnail:nth-child(4n + 2) {
@@ -72,6 +80,7 @@ export default {
   text-transform: capitalize;
   color: var(--white);
   mix-blend-mode: difference;
+  z-index: 2;
 }
 
 .photo-collection-thumbnail:hover {

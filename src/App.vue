@@ -13,6 +13,7 @@
     <transition name="pagefade">
       <router-view
         v-bind="{
+          data,
           setCameraTo,
           workSelect,
           setWireframeOpacity,
@@ -46,6 +47,8 @@ import "./scss/fonts.scss";
 import VueRouter from "vue-router";
 import * as THREE from "three";
 
+import { fetch } from "./helpers/fetchers.js";
+
 import GL from "./components/GL.vue";
 import Menu from "./components/Menu.vue";
 
@@ -66,7 +69,7 @@ const app = {
     base: __dirname,
     routes: [
       {
-        path: "/work",
+        path: "/",
         component: CategoryWrapper
       },
       {
@@ -94,6 +97,12 @@ const app = {
         selectionMade: false,
         redirectToUrl: "/",
         redirectDone: false
+      },
+      data: {
+        photo: [],
+        design: [],
+        dev: [],
+        exp: []
       },
       gl: {
         useControls: false,
@@ -196,13 +205,13 @@ const app = {
           geo,
           this.gl.materials.wireframeMaterial
         );
-        wireframe.scale.set(1.001, 1.001, 1.001);
+        //remove intersection bewteen mesh and wireframe
+        mesh.scale.set(0.999, 0.999, 0.999);
         group.add(mesh);
         group.add(wireframe);
         return group;
       });
 
-      console.log(meshes);
       this.setMeshes(meshes);
       return meshes;
     },
@@ -258,10 +267,24 @@ const app = {
       });
       this.gl.materials.wireframeMaterial.dispose();
       this.gl.materials.filledMaterial.dispose();
+    },
+    async fetchSiteData() {
+      const data = await Promise.all([
+        fetch("dev", false),
+        fetch("design", true),
+        fetch("photo", true)
+      ]);
+      const [dev, design, photo] = data;
+      this.data = {
+        dev,
+        design,
+        photo
+      };
     }
   },
   created() {
     this.addMeshesToScene(this.createMeshes());
+    this.fetchSiteData();
   }
 };
 
@@ -335,8 +358,7 @@ html {
 }
 
 .pagefade-enter-active {
-  transition: opacity 0.5s;
-  transition-delay: 1.5s;
+  transition: opacity 1.5s;
 }
 
 .pagefade-leave-active {

@@ -55,7 +55,7 @@ export default {
       links: [
         {
           title: "work",
-          to: "/work"
+          to: "/"
         },
         {
           title: "about",
@@ -110,7 +110,7 @@ export default {
       return this.$route.path === url;
     },
     testIsWorkSection: function(to) {
-      const test = to.includes("/work/") && to !== "/work";
+      const test = to.includes("/work/") && to !== "/";
       return test;
     }
   },
@@ -132,7 +132,7 @@ nav {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  z-index: 10;
+  z-index: 0;
   mix-blend-mode: difference;
 }
 
@@ -161,9 +161,10 @@ a::before {
   content: "";
   height: 1px;
   width: 0;
-  background-color: var(--light-grey);
+  background-color: var(--white);
   left: 0;
   bottom: -1px;
+  mix-blend-mode: difference;
   transition: 0.3s width ease-in-out;
 }
 
@@ -172,10 +173,7 @@ a.active::before {
   width: 100%;
 }
 
-a.active::before {
-  background-color: var(--white);
-}
-
+a:hover,
 a.active {
   color: var(--white);
 }

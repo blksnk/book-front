@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import axios from "axios";
 export default {
   name: "PhotoCollection",
   props: {
@@ -39,59 +38,30 @@ export default {
     },
     setActiveMeshAsWireframe: {
       type: Function
+    },
+    data: {
+      type: Object
     }
-  },
-  data() {
-    return {
-      collection: {
-        title: "",
-        date: new Date(),
-        photos: []
-      }
-    };
   },
   methods: {
     setupGL: function() {
-      this.setCameraTo({ x: this.currentXOffset, y: 0, z: 4 });
+      // this.setCameraTo({ x: this.currentXOffset - 7, y: -2, z: 6 });
       // setTimeout(() => {
       //   this.useControls(true);
       // }, 1500);
     },
     goBack: function() {
       this.router.push("/work/photo");
-    },
-    fetchCollection: async function() {
-      const data = await this.fetchData();
-      this.collection = this.formatData(data);
-    },
-    fetchData: async function() {
-      try {
-        const res = await axios.get(
-          `${process.env.VUE_APP_API_URL}/photo-collections/${this.$route.params.id}`
-        );
-        return res.data;
-      } catch (e) {
-        console.error(e);
-      }
-    },
-    formatData: function(collection) {
-      return {
-        ...collection,
-        photos: collection.photos.map(photo => {
-          return {
-            ...photo,
-            url: process.env.VUE_APP_API_URL + photo.url
-          };
-        }),
-        thumbnail: {
-          ...collection.thumbnail,
-          url: process.env.VUE_APP_API_URL + collection.thumbnail.url
-        }
-      };
+    }
+  },
+  computed: {
+    collection: function() {
+      return this.data.photo.find(
+        collection => collection.id === parseInt(this.$route.params.id)
+      );
     }
   },
   mounted() {
-    this.fetchCollection();
     this.setupGL();
   }
 };
@@ -102,6 +72,7 @@ export default {
   min-height: 100vh;
   width: 100%;
   padding: var(--page-padding);
+  z-index: 1;
 }
 
 .collection.expanded {
@@ -125,7 +96,6 @@ export default {
   width: 100%;
   background-position: center;
   background-size: cover;
-  z-index: 2;
   object-fit: cover;
 }
 

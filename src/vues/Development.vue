@@ -1,7 +1,7 @@
 <template>
   <section id="dev-page">
     <DevWork
-      v-for="(work, index) in works"
+      v-for="(work, index) in data.dev"
       v-bind="{
         work,
         index,
@@ -16,7 +16,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import DevWork from "../components/DevWork.vue";
 export default {
   name: "Development",
@@ -47,11 +46,13 @@ export default {
     },
     activeMesh: {
       type: Object
+    },
+    data: {
+      type: Object
     }
   },
   data() {
     return {
-      works: [],
       expandedIndex: 0,
       expanded: false
     };
@@ -62,14 +63,6 @@ export default {
       this.hideAllMeshesButOne(this.activeMesh);
       this.setActiveMeshAsWireframe();
       this.activeMesh.material = this.gl.materials.wireframeMaterial;
-    },
-    fetchData: async function() {
-      try {
-        const res = await axios.get(`${process.env.VUE_APP_API_URL}/dev-works`);
-        this.works = res.data;
-      } catch (e) {
-        console.error(e);
-      }
     },
     formatIndex: function(index) {
       if (!index) {
@@ -93,7 +86,6 @@ export default {
   },
   mounted() {
     this.setupGL();
-    this.fetchData();
   }
 };
 </script>

@@ -3,7 +3,7 @@
     <transition v-if="show" name="fade">
       <div id="photo-collection-container">
         <PhotoCollectionThumbnail
-          v-for="(collection, index) in collections"
+          v-for="(collection, index) in data.photo"
           v-bind="{
             onClick: viewCollection,
             onHover: selectCollection,
@@ -21,7 +21,6 @@
 
 <script>
 import PhotoCollectionThumbnail from "../components/PhotoCollectionThumbnail.vue";
-import axios from "axios";
 
 export default {
   name: "Photography",
@@ -46,18 +45,24 @@ export default {
     },
     setActiveMeshAsWireframe: {
       type: Function
+    },
+    data: {
+      type: Object
+    },
+    currentXOffset: {
+      type: Number,
+      default: 21
     }
   },
   data() {
     return {
       selectedIndex: 0,
-      collections: [],
-      show: false
+      show: true
     };
   },
   computed: {
     selectedCollection: function() {
-      return this.collections[this.selectedIndex];
+      return this.data.photo[this.selectedIndex];
     }
   },
   methods: {
@@ -66,7 +71,7 @@ export default {
       this.setActiveMeshAsWireframe();
       this.setCameraTo({
         z: 4,
-        x: this.workSelect.activeIndex * this.gl.placementOffset,
+        x: this.currentXOffset,
         y: -4
       });
     },
@@ -81,19 +86,6 @@ export default {
         };
       });
     },
-    fetchCollections: async function() {
-      const data = await this.fetchData();
-      const formatted = this.formatData(data);
-      console.log(formatted);
-      this.collections = formatted;
-      this.show = true;
-    },
-    fetchData: async function() {
-      const res = await axios.get(
-        `${process.env.VUE_APP_API_URL}/photo-collections`
-      );
-      return res.data;
-    },
     selectCollection: function(index) {
       this.selectedIndex = index;
     },
@@ -104,7 +96,6 @@ export default {
   },
   mounted() {
     this.setupGL();
-    this.fetchCollections();
   }
 };
 </script>
