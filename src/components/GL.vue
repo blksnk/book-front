@@ -83,11 +83,14 @@ const gl = {
   methods: {
     init: function() {
       this.container = document.getElementById("gl-mount");
+      const horizontalFov = 110;
+      const aspect = window.innerWidth / window.innerHeight;
+      const fov = (Math.atan(Math.tan(((horizontalFov / 2) * Math.PI) / 180) / aspect) * 2 * 180) / Math.PI;
       this.camera = new THREE.PerspectiveCamera(
-        70,
+        fov,
         window.innerWidth / window.innerHeight,
         0.05,
-        15
+        20
       );
       this.camera.position.z = 4;
       this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -214,5 +217,9 @@ export default gl;
   z-index: 20;
   user-select: none;
   pointer-events: none;
+}
+
+#gl-mount canvas {
+  z-index: inherit;
 }
 </style>

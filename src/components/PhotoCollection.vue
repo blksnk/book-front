@@ -39,7 +39,7 @@ export default {
     setActiveMeshAsWireframe: {
       type: Function
     },
-    data: {
+    siteData: {
       type: Object
     }
   },
@@ -56,7 +56,7 @@ export default {
   },
   computed: {
     collection: function() {
-      return this.data.photo.find(
+      return this.siteData.photo.find(
         collection => collection.id === parseInt(this.$route.params.id)
       );
     }

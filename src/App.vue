@@ -13,7 +13,7 @@
     <transition name="pagefade">
       <router-view
         v-bind="{
-          data,
+          siteData,
           setCameraTo,
           workSelect,
           setWireframeOpacity,
@@ -23,7 +23,8 @@
           currentXOffset,
           hideAllMeshesButOne,
           activeMesh,
-          setActiveMeshAsWireframe
+          setActiveMeshAsWireframe,
+          setActiveMeshAsTransparentWireframe
         }"
       ></router-view>
     </transition>
@@ -34,7 +35,8 @@
         workSelect,
         setActiveIndex,
         highlightMesh,
-        activeMesh
+        activeMesh,
+        currentXOffset
       }"
     />
   </main>
@@ -98,12 +100,13 @@ const app = {
         redirectToUrl: "/",
         redirectDone: false
       },
-      data: {
+      siteData: {
         photo: [],
         design: [],
         dev: [],
         exp: []
       },
+      loaded: false,
       gl: {
         useControls: false,
         cameraTo: {
@@ -168,6 +171,19 @@ const app = {
     },
     useControls(bool) {
       this.gl.useControls = bool;
+    },
+    assignCorrectIndexOnSiteEnter() {
+      const workRoutes = [
+        "/work/dev",
+        "/work/design",
+        "/work/music",
+        "/work/photo",
+        "/work/exp"
+      ];
+      if (this.$route.path.includes("/work")) {
+        this.workSelect.activeIndex = workRoutes.indexOf(this.$route.path);
+      }
+      console.log(this.$route, workRoutes);
     },
     resetSelection() {
       this.workSelect = {
@@ -243,6 +259,9 @@ const app = {
     setActiveMeshAsWireframe() {
       this.resetMeshMaterials(this.activeMesh);
     },
+    setActiveMeshAsTransparentWireframe() {
+      this.activeMesh.children[0].material = this.gl.materials.transparentMaterial;
+    },
     setRedirectDone(bool) {
       this.workSelect.redirectDone = bool;
     },
@@ -275,16 +294,18 @@ const app = {
         fetch("photo", true)
       ]);
       const [dev, design, photo] = data;
-      this.data = {
+      this.siteData = {
         dev,
         design,
         photo
       };
+      this.loaded = true;
     }
   },
   created() {
     this.addMeshesToScene(this.createMeshes());
     this.fetchSiteData();
+    this.assignCorrectIndexOnSiteEnter();
   }
 };
 
@@ -302,12 +323,14 @@ export default app;
   --padding-horizontal: 6rem;
   --padding-top: 8rem;
   --border-radius: 4px;
-  font-family: "Monument";
+  --font-size-small: 1rem;
+  font-family: "Bw";
   user-select: none;
   text-rendering: optimizeLegibility;
 }
 
 h1 {
+  font-family: "Monument";
   position: relative;
   font-size: 6rem;
   margin: 0;
@@ -320,6 +343,7 @@ h1 {
 }
 
 h2 {
+  font-family: "Monument";
   position: relative;
   font-size: 4rem;
   margin: 0;
@@ -331,6 +355,7 @@ h2 {
 }
 
 p {
+  font-family: "Bw";
   margin: 0;
 }
 
@@ -341,6 +366,18 @@ html {
 #app {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+*:focus {
+  outline-color: var(--white);
+}
+
+.fillHover:hover {
+  color: var(--white);
 }
 
 .fade-enter-active {

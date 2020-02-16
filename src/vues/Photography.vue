@@ -3,7 +3,7 @@
     <transition v-if="show" name="fade">
       <div id="photo-collection-container">
         <PhotoCollectionThumbnail
-          v-for="(collection, index) in data.photo"
+          v-for="(collection, index) in siteData.photo"
           v-bind="{
             onClick: viewCollection,
             onHover: selectCollection,
@@ -46,7 +46,10 @@ export default {
     setActiveMeshAsWireframe: {
       type: Function
     },
-    data: {
+    setActiveMeshAsTransparentWireframe: {
+      type: Function
+    },
+    siteData: {
       type: Object
     },
     currentXOffset: {
@@ -62,13 +65,13 @@ export default {
   },
   computed: {
     selectedCollection: function() {
-      return this.data.photo[this.selectedIndex];
+      return this.siteData.photo[this.selectedIndex];
     }
   },
   methods: {
     setupGL: function() {
       this.hideAllMeshesButOne(this.activeMesh);
-      this.setActiveMeshAsWireframe();
+      this.setActiveMeshAsTransparentWireframe();
       this.setCameraTo({
         z: 4,
         x: this.currentXOffset,

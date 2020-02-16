@@ -147,6 +147,7 @@ export default {
 
 .dev-work-index {
   font-size: 4rem;
+  font-family: "Monument";
   color: var(--white);
   font-weight: 700;
   transition: 0.3s color linear;

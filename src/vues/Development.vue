@@ -1,7 +1,7 @@
 <template>
   <section id="dev-page">
     <DevWork
-      v-for="(work, index) in data.dev"
+      v-for="(work, index) in siteData.dev"
       v-bind="{
         work,
         index,
@@ -47,7 +47,7 @@ export default {
     activeMesh: {
       type: Object
     },
-    data: {
+    siteData: {
       type: Object
     }
   },

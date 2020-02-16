@@ -1,5 +1,5 @@
 {
-  "name": "test-vue",
+  "name": "book-front",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -12,6 +12,7 @@
     "core-js": "^3.4.4",
     "dotenv": "^8.2.0",
     "gsap": "^3.1.1",
+    "locomotive-scroll": "^3.2.10",
     "normalize.css": "^8.0.1",
     "sass": "^1.25.0",
     "sass-loader": "^8.0.2",
@@ -27,6 +28,7 @@
     "babel-eslint": "^10.0.3",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
+    "vue-eslint-parser": "^7.0.0",
     "vue-template-compiler": "^2.6.10"
   },
   "eslintConfig": {

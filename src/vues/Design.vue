@@ -1,10 +1,14 @@
 <template>
   <section id="design-page" v-on:mousewheel="onScroll">
-    <div id="design-project-thumbnail-container" ref="container">
+    <div
+      id="design-project-thumbnail-container"
+      ref="container"
+      v-if="!selectionMade"
+    >
       <div id="design-project-thumbnail-scroller" ref="scroller">
         <img
           class="design-project-thumbail"
-          v-for="(project, index) in data.design"
+          v-for="(project, index) in siteData.design"
           :src="project.thumbnail.url"
           :alt="titles[index].title"
           v-bind:key="'design-project-thumbail-' + index"
@@ -12,7 +16,11 @@
       </div>
     </div>
     <transition name="fade">
-      <div id="design-project-title-scroller" ref="titles">
+      <div
+        id="design-project-title-scroller"
+        ref="titles"
+        v-if="!selectionMade"
+      >
         <h2
           v-for="(title, index) in titles"
           :class="{
@@ -28,18 +36,30 @@
         </h2>
       </div>
     </transition>
+
+    <DesignProject
+      v-if="selectionMade"
+      v-bind="{
+        project: selectedProject,
+        index: selectedIndex,
+        navigateProject,
+        setCameraTo,
+        currentXOffset
+      }"
+    />
   </section>
 </template>
 
 <script>
-import { TweenMax, Power2 } from "gsap";
+import gsap, { Power2 } from "gsap";
+import DesignProject from "./DesignProject.vue";
 export default {
   name: "design",
+  components: {
+    DesignProject
+  },
   props: {
     setCameraTo: {
-      type: Function
-    },
-    setWireframeOpacity: {
       type: Function
     },
     workSelect: {
@@ -58,10 +78,13 @@ export default {
     hideAllMeshesButOne: {
       type: Function
     },
+    setActiveMeshAsTransparentWireframe: {
+      type: Function
+    },
     setActiveMeshAsWireframe: {
       type: Function
     },
-    data: {
+    siteData: {
       type: Object
     }
   },
@@ -74,19 +97,22 @@ export default {
           .getComputedStyle(document.documentElement)
           .fontSize.split("px")[0]
       ),
-      show: true,
-      scrollY: 0
+      scrollY: 0,
+      lockInput: true
     };
   },
   computed: {
     titles() {
-      return this.data.design.map(project => project.title);
+      return this.siteData.design.map(project => project.title);
+    },
+    selectedProject() {
+      return this.siteData.design[this.selectedIndex];
     }
   },
   methods: {
     setupGL() {
       this.hideAllMeshesButOne(this.activeMesh);
-      this.setActiveMeshAsWireframe();
+      this.setActiveMeshAsTransparentWireframe();
       this.setCameraTo({
         z: 6,
         x: this.currentXOffset - 2.5,
@@ -94,72 +120,111 @@ export default {
       });
     },
     transitionIn() {
-      TweenMax.to(this.$refs.container, 1.4, {
+      gsap.fromTo(
+        this.$refs.container,
+        {
+          y: "100vh"
+        },
+        {
+          duration: 1.4,
+          y: 0,
+          ease: Power2.easeOut
+        }
+      );
+      gsap.to(this.$refs.titles, {
         y: 0,
-        ease: Power2.easeOut
-      });
-      TweenMax.to(this.$refs.titles, 1.4, {
-        y: 0,
+        duration: 1.4,
         ease: Power2.easeOut,
-        delay: 0.7
+        delay: 0.7,
+        onComplete: () => {
+          this.lockInput = false;
+        }
       });
+    },
+    navigateProject(dir) {
+      const length = this.siteData.design.length - 1;
+      if (dir === "next") {
+        console.log("next");
+        if (this.selectedIndex < length) {
+          this.selectedIndex++;
+        } else if (this.selectedIndex === length) {
+          this.selectedIndex = 0;
+        }
+      } else if (dir === "prev") {
+        console.log(this.selectedIndex, length);
+        if (this.selectedIndex > 0) {
+          this.selectedIndex--;
+        } else if (this.selectedIndex === 0) {
+          this.selectedIndex = length;
+        }
+      }
     },
     transitionSelect() {
       const { container, titles } = this.$refs;
-      TweenMax.set(titles, {
+      gsap.set(titles, {
         pointerEvents: "none"
       });
-      TweenMax.to(titles, 0.7, {
+      gsap.to(titles, {
+        duration: 0.7,
         opacity: 0
       });
-      TweenMax.to(container, 1.4, {
-        width: "100vw",
-        y: -10 * this.rem,
+      gsap.to(container, {
+        x: "-100%",
+        duration: 0.7,
         delay: 0.7,
-        ease: Power2.easeInOut
+        ease: Power2.easeIn,
+        onComplete: () => {
+          this.selectionMade = true;
+        }
       });
-      setTimeout(() => {
-        this.setCameraTo({
-          y: -2,
-          x: this.currentXOffset + 5,
-          z: 8
-        });
-      }, 700);
     },
     onHover(index) {
-      if (index !== this.selectedIndex && !this.selectionMade) {
+      if (
+        index !== this.selectedIndex &&
+        !this.selectionMade &&
+        !this.lockInput
+      ) {
         this.selectedIndex = index;
         this.scrollToImg(index);
       }
     },
     onClick(index) {
-      this.selectedIndex = index;
-      this.selectionMade = true;
-      this.transitionSelect();
+      if (!this.lockInput && !this.selectionMade) {
+        this.selectedIndex = index;
+        this.lockInput = true;
+        this.transitionSelect();
+      }
     },
     scrollToImg(index) {
-      TweenMax.to(this.$refs.scroller, 0.7, {
-        y: -(this.$refs.container.clientHeight + 2 * this.rem) * index,
-        ease: Power2.easeInOut
+      const height = window
+        .getComputedStyle(this.$refs.container)
+        .getPropertyValue("height")
+        .split("px")[0];
+      console.log(height);
+      gsap.to(this.$refs.scroller, {
+        y: -(parseInt(height) + 2 * this.rem - 128) * index,
+        ease: Power2.easeInOut,
+        duration: 0.7
       });
     },
     onScroll(e) {
       const { titles } = this.$refs;
-      if (!this.selectionMade && titles.clientHeight >= window.screen.height) {
+      if (!this.selectionMade && titles.clientHeight >= window.innerHeight) {
         const { deltaY } = e;
         let change = this.scrollY + deltaY * 1.5;
         const isEnd =
-          titles.clientHeight - change <= window.screen.height - 12 * this.rem;
+          titles.clientHeight - change <= window.innerHeight - 12 * this.rem;
 
         if (change - deltaY <= 0 && deltaY < 0) {
           change = 0;
         }
         if (isEnd && deltaY > 0) {
-          change = titles.clientHeight - window.screen.height + 12 * this.rem;
+          change = titles.clientHeight - window.innerHeight + 12 * this.rem;
         }
 
-        TweenMax.to(titles, 0.1, {
+        gsap.to(titles, {
           y: -change,
+          duration: 0.1,
           ease: Power2.easeInOut
         });
         this.scrollY = change;
@@ -175,7 +240,7 @@ export default {
 
 <style scoped>
 #design-page {
-  padding: 8rem 4rem 0 0;
+  padding: 0 0 0 0;
   height: 100vh;
   width: 100%;
   position: relative;
@@ -200,6 +265,7 @@ export default {
   text-align: left;
   transition: color 0.1s;
   z-index: 22;
+  cursor: pointer;
 }
 
 .design-project-title.selected {
@@ -209,11 +275,12 @@ export default {
 }
 
 #design-project-thumbnail-container {
+  margin-top: 8rem;
   z-index: 1;
   height: 100%;
   width: 60%;
   overflow: hidden;
-  transform: translateY(100%);
+  transform: translateY(100vh);
 }
 
 #design-project-thumbnail-scroller {
