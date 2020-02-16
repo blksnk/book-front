@@ -95,11 +95,15 @@
     </article>
     <transition name="fade">
       <button
-        id="design-selected-project-close-btn"
-        v-on:click="close"
+        id="design-selected-project-btm-btn"
+        v-on:click="closeOrScroll"
         ref="closeBtn"
+        class="hover-underline"
+        v-bind:key="
+          'design-selected-project-scrolled-btn-' + scrolled ? 'false' : 'false'
+        "
       >
-        close
+        {{ scrolled ? "scroll up" : "close" }}
       </button>
     </transition>
   </fragment>
@@ -146,19 +150,9 @@ export default {
   data() {
     return {
       scroll: null,
-      glOffset: -6
+      scrolled: false,
+      glOffset: -8
     };
-  },
-  mounted() {
-    this.setCameraTo({
-      x: this.currentXOffset + this.glOffset,
-      y: 0,
-      z: 5
-    });
-    this.transitionIn();
-    this.$nextTick(function() {
-      this.initLocomotive();
-    });
   },
   methods: {
     initLocomotive() {
@@ -169,18 +163,23 @@ export default {
         inertia: 0.8,
         getSpeed: true
       });
+      this.scroll.on("scroll", this.checkScrolled);
     },
     navigate(dir) {
       this.transitionChange(0.2, 0, () => this.navigateProject(dir));
       this.glOffset *= -1;
       this.setCameraTo({ x: this.currentXOffset + this.glOffset });
     },
-    scrollToTop() {
-      this.scroll.update();
-      this.scroll.on("scroll", this.revealOnReachTop);
+    scrollToTop(projectChange) {
       this.scroll.scrollTo(this.$refs.thumbnail);
+
+      if (projectChange) {
+        this.scroll.update();
+        this.scroll.on("scroll", this.revealOnReachTop);
+      }
     },
     close() {
+      console.log(this.scroll);
       gsap.fromTo(
         this.$refs.page,
         {
@@ -200,6 +199,13 @@ export default {
         opacity: 0
       });
     },
+    closeOrScroll() {
+      if (this.scrolled) {
+        this.scrollToTop(false);
+      } else {
+        this.close();
+      }
+    },
     transitionChange(duration, opacity, callback) {
       gsap.to(this.$refs.thumbnail, {
         duration,
@@ -213,7 +219,7 @@ export default {
     },
     revealOnReachTop(e) {
       if (e.speed <= 0 && e.speed >= -0.5) {
-        this.transitionChange(this.TweenDuration, 1);
+        this.transitionChange(this.tweenDuration, 1);
         this.scroll.off("scroll", this.revealOnReachTop);
       }
     },
@@ -237,35 +243,54 @@ export default {
         duration: this.tweenDuration,
         opacity: 1
       });
+    },
+    checkScrolled(e) {
+      if (!this.scrolled && e.scroll.y >= 25) {
+        this.scrolled = true;
+      } else if (this.scrolled && e.scroll.y <= 25) {
+        this.scrolled = false;
+      }
     }
   },
   watch: {
     project: function() {
       console.log("project change");
       this.$nextTick(() => {
-        this.scrollToTop();
+        this.scrollToTop(true);
       });
     }
+  },
+  mounted() {
+    this.setCameraTo({
+      x: this.currentXOffset + this.glOffset,
+      y: 0,
+      z: 6
+    });
+    this.transitionIn();
+    this.$nextTick(function() {
+      this.initLocomotive();
+    });
+  },
+  beforeDestroy() {
+    this.scroll.destroy();
   }
 };
 </script>
 
 <style>
 #design-project-page {
+  position: relative;
+  width: 100%;
   top: 0;
   left: 0;
   right: 0;
-  background-color: var(--black);
-  /* bottom: 0; */
-  /* height: 100vh; */
-  width: 100%;
-  position: relative;
-  /* overflow: auto; */
   transform: translateX(100vw);
+  background-color: var(--black);
 }
 
 #design-selected-project-thumb {
-  height: calc(100vh - 14rem);
+  height: calc(100vh - 13rem);
+  margin-top: -1rem;
   width: 100%;
   object-fit: cover;
 }
@@ -318,15 +343,11 @@ export default {
   color: var(--white);
 }
 
-.design-project-navigation-btn:focus {
-  outline: none;
-}
-
-#design-selected-project-close-btn {
+#design-selected-project-btm-btn {
   position: fixed;
-  right: 5rem;
-  bottom: 3rem;
-  padding: 1rem;
+  right: 6rem;
+  bottom: 4rem;
+  padding: 0;
   cursor: pointer;
   border: none;
   background: none;
@@ -334,6 +355,11 @@ export default {
   font-size: var(--font-size-small);
   mix-blend-mode: difference;
   opacity: 0;
+}
+
+.design-project-navigation-btn:focus,
+#design-selected-project-btm-btn:focus {
+  outline: none;
 }
 
 [data-align="left"] {

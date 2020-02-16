@@ -185,7 +185,6 @@ const app = {
       if (this.$route.path.includes("/work")) {
         this.workSelect.activeIndex = workRoutes.indexOf(this.$route.path);
       }
-      console.log(this.$route, workRoutes);
     },
     resetSelection() {
       this.workSelect = {
@@ -329,6 +328,8 @@ export default app;
   font-family: "Bw";
   user-select: none;
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1 {
@@ -354,6 +355,31 @@ h2 {
   -webkit-text-stroke: 1px var(--white);
   text-transform: uppercase;
   display: block;
+}
+
+.hover-underline {
+  transition: 0.3s color linear;
+}
+
+.hover-underline::before {
+  position: absolute;
+  content: "";
+  height: 1px;
+  width: 0;
+  background-color: var(--white);
+  left: 0;
+  bottom: -1px;
+  mix-blend-mode: difference;
+  transition: 0.3s width ease-in-out;
+}
+
+.hover-underline:hover::before,
+.hover-underline.active::before {
+  width: 100%;
+}
+
+.hover-underline:hover {
+  color: var(--light-grey) !important;
 }
 
 p {

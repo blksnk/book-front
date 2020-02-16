@@ -3,25 +3,16 @@
     <nav id="top-nav">
       <a
         v-for="link in links"
-        :class="{ active: $route.path.includes(link.to) }"
+        :class="{
+          active: $route.path.includes(link.to),
+          'hover-underline': true
+        }"
         v-on:click="e => transitionOut(e, link.to, false)"
         :to="link.to"
         v-bind:key="'link-' + link.to"
         >{{ link.title }}</a
       >
     </nav>
-
-    <!-- <nav id="work-nav" v-if="isWorkSection">
-      <a
-        v-for="(link, index) in workLinks"
-        :class="{ active: isActive(link.to) }"
-        v-on:click="e => transitionOut(e, link.to, true, index)"
-        :to="link.to"
-        v-bind:key="'work-link-' + link.to"
-      >
-        {{ link.title }}
-      </a>
-    </nav> -->
   </fragment>
 </template>
 
@@ -145,42 +136,12 @@ nav {
 }
 
 a {
-  font-family: "Bw";
   font-weight: 600;
-  color: var(--light-grey);
-  font-size: 1rem;
+  color: var(--white);
+  font-size: var(--font-size-small);
   text-decoration: none;
   mix-blend-mode: difference;
   position: relative;
   cursor: pointer;
-  transition: 0.3s color linear;
-}
-
-a::before {
-  position: absolute;
-  content: "";
-  height: 1px;
-  width: 0;
-  background-color: var(--white);
-  left: 0;
-  bottom: -1px;
-  mix-blend-mode: difference;
-  transition: 0.3s width ease-in-out;
-}
-
-a:hover::before,
-a.active::before {
-  width: 100%;
-}
-
-a:hover,
-a.active {
-  color: var(--white);
-}
-
-@media (max-width: 750px) {
-  nav {
-    padding: 0 2rem;
-  }
 }
 </style>

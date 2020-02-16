@@ -205,3 +205,19 @@
   font-weight: 900;
   font-style: italic;
 }
+
+// neue montreal
+
+@font-face {
+  src: url("../assets/fonts/neue-montreal/NeueMontreal-Regular.otf")
+    format("opentype");
+  font-family: "NeueMontreal";
+  font-weight: bold;
+}
+
+@font-face {
+  src: url("../assets/fonts/neue-montreal/NeueMontreal-Bold.otf")
+    format("opentype");
+  font-family: "NeueMontreal";
+  font-weight: normal;
+}

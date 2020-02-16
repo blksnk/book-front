@@ -120,6 +120,9 @@ export default {
     setupGL() {
       this.hideAllMeshesButOne(this.activeMesh);
       this.setActiveMeshAsTransparentWireframe();
+      this.setupCamera();
+    },
+    setupCamera() {
       this.setCameraTo({
         z: 6,
         x: this.currentXOffset - 2.5,
@@ -135,17 +138,17 @@ export default {
         {
           duration: this.tweenDuration * 2,
           y: 0,
-          ease: Power2.easeOut
+          ease: Power2.easeOut,
+          onComplete: () => {
+            this.lockInput = false;
+          }
         }
       );
       gsap.to(this.$refs.titles, {
         y: 0,
         duration: this.tweenDuration * 2,
         ease: Power2.easeOut,
-        delay: this.tweenDuration,
-        onComplete: () => {
-          this.lockInput = false;
-        }
+        delay: this.tweenDuration
       });
     },
     closeProject() {
@@ -175,7 +178,10 @@ export default {
         {
           duration: 0.7,
           x: 0,
-          ease: Power2.easeOut
+          ease: Power2.easeOut,
+          onComplete: () => {
+            this.setupCamera();
+          }
         }
       );
       gsap.fromTo(
