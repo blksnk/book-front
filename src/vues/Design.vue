@@ -44,7 +44,9 @@
         index: selectedIndex,
         navigateProject,
         setCameraTo,
-        currentXOffset
+        currentXOffset,
+        closeProject,
+        tweenDuration
       }"
     />
   </section>
@@ -68,6 +70,10 @@ export default {
     currentXOffset: {
       type: Number,
       default: 7
+    },
+    tweenDuration: {
+      type: Number,
+      default: 0.7
     },
     gl: {
       type: Object
@@ -98,7 +104,8 @@ export default {
           .fontSize.split("px")[0]
       ),
       scrollY: 0,
-      lockInput: true
+      lockInput: true,
+      cHeight: 0
     };
   },
   computed: {
@@ -126,20 +133,67 @@ export default {
           y: "100vh"
         },
         {
-          duration: 1.4,
+          duration: this.tweenDuration * 2,
           y: 0,
           ease: Power2.easeOut
         }
       );
       gsap.to(this.$refs.titles, {
         y: 0,
-        duration: 1.4,
+        duration: this.tweenDuration * 2,
         ease: Power2.easeOut,
-        delay: 0.7,
+        delay: this.tweenDuration,
         onComplete: () => {
           this.lockInput = false;
         }
       });
+    },
+    closeProject() {
+      this.selectionMade = false;
+      this.$nextTick(() => {
+        this.transitionResume();
+      });
+    },
+    transitionResume() {
+      console.log("tr resume");
+      this.scrollToImg(this.selectedIndex, 0);
+      gsap.set(this.$refs.container, {
+        y: 0,
+        x: "-100%"
+      });
+
+      gsap.set(this.$refs.titles, {
+        y: "100Vh",
+        x: 0,
+        opacity: 0
+      });
+      gsap.fromTo(
+        this.$refs.container,
+        {
+          x: "-100%"
+        },
+        {
+          duration: 0.7,
+          x: 0,
+          ease: Power2.easeOut
+        }
+      );
+      gsap.fromTo(
+        this.$refs.titles,
+        {
+          y: "100vh",
+          opacity: 0
+        },
+        {
+          duration: 0.7,
+          opacity: 1,
+          y: 0,
+          delay: 0.7,
+          onComplete: () => {
+            this.lockInput = false;
+          }
+        }
+      );
     },
     navigateProject(dir) {
       const length = this.siteData.design.length - 1;
@@ -185,7 +239,7 @@ export default {
         !this.lockInput
       ) {
         this.selectedIndex = index;
-        this.scrollToImg(index);
+        this.scrollToImg(index, 0.7);
       }
     },
     onClick(index) {
@@ -195,17 +249,18 @@ export default {
         this.transitionSelect();
       }
     },
-    scrollToImg(index) {
-      const height = window
-        .getComputedStyle(this.$refs.container)
-        .getPropertyValue("height")
-        .split("px")[0];
-      console.log(height);
-      gsap.to(this.$refs.scroller, {
-        y: -(parseInt(height) + 2 * this.rem - 128) * index,
-        ease: Power2.easeInOut,
-        duration: 0.7
-      });
+    scrollToImg(index, duration) {
+      if (!duration) {
+        gsap.set(this.$refs.scroller, {
+          y: -(parseInt(this.cHeight) + 2 * this.rem - 128) * index
+        });
+      } else {
+        gsap.to(this.$refs.scroller, {
+          y: -(parseInt(this.cHeight) + 2 * this.rem - 128) * index,
+          ease: Power2.easeInOut,
+          duration
+        });
+      }
     },
     onScroll(e) {
       const { titles } = this.$refs;
@@ -234,6 +289,10 @@ export default {
   mounted() {
     this.setupGL();
     this.transitionIn();
+    this.cHeight = window
+      .getComputedStyle(this.$refs.container)
+      .getPropertyValue("height")
+      .split("px")[0];
   }
 };
 </script>

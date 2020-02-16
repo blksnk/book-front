@@ -24,7 +24,8 @@
           hideAllMeshesButOne,
           activeMesh,
           setActiveMeshAsWireframe,
-          setActiveMeshAsTransparentWireframe
+          setActiveMeshAsTransparentWireframe,
+          tweenDuration
         }"
       ></router-view>
     </transition>
@@ -106,6 +107,7 @@ const app = {
         dev: [],
         exp: []
       },
+      tweenDuration: 0.7,
       loaded: false,
       gl: {
         useControls: false,
