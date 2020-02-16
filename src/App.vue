@@ -359,6 +359,7 @@ h2 {
 
 .hover-underline {
   transition: 0.3s color linear;
+  position: relative;
 }
 
 .hover-underline::before {
@@ -419,6 +420,7 @@ html {
 
 .fade-enter,
 .fade-leave-to {
+  pointer-events: none;
   opacity: 0;
 }
 

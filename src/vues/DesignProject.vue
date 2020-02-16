@@ -93,19 +93,21 @@
         </section>
       </section>
     </article>
-    <transition name="fade">
-      <button
-        id="design-selected-project-btm-btn"
-        v-on:click="closeOrScroll"
-        ref="closeBtn"
-        class="hover-underline"
-        v-bind:key="
-          'design-selected-project-scrolled-btn-' + scrolled ? 'false' : 'false'
-        "
-      >
-        {{ scrolled ? "scroll up" : "close" }}
+    <div id="design-selected-project-btm-btn-container" ref="btnContainer">
+      <transition name="fade">
+        <button
+          class="hover-underline"
+          v-if="scrolled"
+          v-on:click="scrollToTop"
+        >
+          .back to top
+        </button>
+      </transition>
+
+      <button class="hover-underline" v-on:click="close">
+        .close project
       </button>
-    </transition>
+    </div>
   </fragment>
 </template>
 
@@ -151,7 +153,11 @@ export default {
     return {
       scroll: null,
       scrolled: false,
-      glOffset: -8
+      glOffset: {
+        x: -8,
+        y: -4,
+        z: 8
+      }
     };
   },
   methods: {
@@ -167,8 +173,6 @@ export default {
     },
     navigate(dir) {
       this.transitionChange(0.2, 0, () => this.navigateProject(dir));
-      this.glOffset *= -1;
-      this.setCameraTo({ x: this.currentXOffset + this.glOffset });
     },
     scrollToTop(projectChange) {
       this.scroll.scrollTo(this.$refs.thumbnail);
@@ -179,32 +183,27 @@ export default {
       }
     },
     close() {
-      console.log(this.scroll);
+      const y = this.getCurrentScrollY();
       gsap.fromTo(
         this.$refs.page,
         {
+          y,
           x: 0
         },
         {
           duration: this.tweenDuration,
           x: "100vw",
+          y,
           ease: Power2.easeIn,
           onComplete: () => {
             this.closeProject();
           }
         }
       );
-      gsap.to(this.$refs.closeBtn, {
+      gsap.to(this.$refs.btnContainer, {
         duration: this.tweenDuration,
         opacity: 0
       });
-    },
-    closeOrScroll() {
-      if (this.scrolled) {
-        this.scrollToTop(false);
-      } else {
-        this.close();
-      }
     },
     transitionChange(duration, opacity, callback) {
       gsap.to(this.$refs.thumbnail, {
@@ -239,7 +238,7 @@ export default {
         opacity: 1,
         ease: Power2.easeOut
       });
-      gsap.to(this.$refs.closeBtn, {
+      gsap.to(this.$refs.btnContainer, {
         duration: this.tweenDuration,
         opacity: 1
       });
@@ -250,21 +249,34 @@ export default {
       } else if (this.scrolled && e.scroll.y <= 25) {
         this.scrolled = false;
       }
+    },
+    getCurrentScrollY() {
+      const { y, top } = this.$refs.page.getBoundingClientRect();
+      return Math.max(y, top);
     }
   },
   watch: {
     project: function() {
-      console.log("project change");
       this.$nextTick(() => {
         this.scrollToTop(true);
+      });
+    },
+    index: function(next) {
+      this.$nextTick(() => {
+        this.glOffset.x *= -1;
+        this.setCameraTo({
+          x: this.currentXOffset + this.glOffset.x,
+          y: this.glOffset.y + next * 1.5,
+          z: this.glOffset.z + next * 0.5
+        });
       });
     }
   },
   mounted() {
     this.setCameraTo({
-      x: this.currentXOffset + this.glOffset,
-      y: 0,
-      z: 6
+      x: this.currentXOffset + this.glOffset.x,
+      y: this.glOffset.y + this.index * 1.5,
+      z: this.glOffset.z + this.index * 0.5
     });
     this.transitionIn();
     this.$nextTick(function() {
@@ -343,10 +355,19 @@ export default {
   color: var(--white);
 }
 
-#design-selected-project-btm-btn {
+#design-selected-project-btm-btn-container {
   position: fixed;
   right: 6rem;
   bottom: 4rem;
+  mix-blend-mode: difference;
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+#design-selected-project-btm-btn-container button {
   padding: 0;
   cursor: pointer;
   border: none;
@@ -354,11 +375,10 @@ export default {
   color: var(--white);
   font-size: var(--font-size-small);
   mix-blend-mode: difference;
-  opacity: 0;
+  margin-top: 0.5rem;
 }
 
-.design-project-navigation-btn:focus,
-#design-selected-project-btm-btn:focus {
+#design-selected-project-btm-btn-container button:focus {
   outline: none;
 }
 
