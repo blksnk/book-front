@@ -158,7 +158,6 @@ export default {
       });
     },
     transitionResume() {
-      console.log("tr resume");
       this.scrollToImg(this.selectedIndex, 0);
       gsap.set(this.$refs.container, {
         y: 0,
@@ -204,14 +203,13 @@ export default {
     navigateProject(dir) {
       const length = this.siteData.design.length - 1;
       if (dir === "next") {
-        console.log("next");
         if (this.selectedIndex < length) {
           this.selectedIndex++;
         } else if (this.selectedIndex === length) {
           this.selectedIndex = 0;
         }
-      } else if (dir === "prev") {
-        console.log(this.selectedIndex, length);
+      }
+      if (dir === "prev") {
         if (this.selectedIndex > 0) {
           this.selectedIndex--;
         } else if (this.selectedIndex === 0) {

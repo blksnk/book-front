@@ -175,7 +175,7 @@ export default {
       this.transitionChange(0.2, 0, () => this.navigateProject(dir));
     },
     scrollToTop(projectChange) {
-      this.scroll.scrollTo(this.$refs.thumbnail);
+      this.scroll.scrollTo(this.$refs.thumbnail, 16);
 
       if (projectChange) {
         this.scroll.update();
@@ -217,7 +217,8 @@ export default {
       });
     },
     revealOnReachTop(e) {
-      if (e.speed <= 0 && e.speed >= -0.5) {
+      console.log(e);
+      if (e.speed >= 0) {
         this.transitionChange(this.tweenDuration, 1);
         this.scroll.off("scroll", this.revealOnReachTop);
       }
@@ -301,8 +302,7 @@ export default {
 }
 
 #design-selected-project-thumb {
-  height: calc(100vh - 13rem);
-  margin-top: -1rem;
+  height: calc(100vh - 13.2rem);
   width: 100%;
   object-fit: cover;
 }
