@@ -52,6 +52,15 @@ export function formatDefault(data) {
     if (item.images) {
       n.images = item.images.map(image => formatMediaUrl(image));
     }
+    if (item.image1) {
+      n.image1 = formatMediaUrl(item.image1);
+    }
+    if (item.image2) {
+      n.image2 = formatMediaUrl(item.image2);
+    }
+    if (item.image3) {
+      n.image3 = formatMediaUrl(item.image3);
+    }
     return n;
   });
   return formatted;

@@ -110,7 +110,7 @@ export default {
   },
   computed: {
     titles() {
-      return this.siteData.design.map(project => project.title);
+      return this.siteData.design.map(project => project.projectTitle);
     },
     selectedProject() {
       return this.siteData.design[this.selectedIndex];
@@ -359,5 +359,6 @@ export default {
   width: 100%;
   object-fit: cover;
   margin-bottom: 2rem;
+  filter: brightness(0.8);
 }
 </style>

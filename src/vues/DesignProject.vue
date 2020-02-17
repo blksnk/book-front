@@ -18,19 +18,20 @@
           data-scroll-offset="-100%"
           data-scroll-speed="2"
         >
-          {{ project.title }}
+          {{ project.projectTitle }}
         </h1>
 
         <text-element
-          title="Description"
+          :title="project.title1"
           data-align="left"
-          :paragraphs="formatText(project.description)"
+          :paragraphs="formatText(project.paragraph1)"
         />
         <!-- <text-element title="Date" data-align="right" :paragraphs="[project.date]"/> -->
 
         <img
-          v-if="project.images[1]"
-          :src="project.images[0].url"
+          v-if="project.image1"
+          :src="project.image1.url"
+          loading="lazy"
           data-scroll
           data-scroll-speed="2"
           data-scroll-offset="-100%"
@@ -39,31 +40,33 @@
         />
 
         <text-element
-          title="Problem"
+          :title="project.title2"
           data-align="right"
-          :paragraphs="formatText(project.paragraph1)"
-        />
-
-        <img
-          v-if="project.images[1]"
-          :src="project.images[1].url"
-          data-align="left"
-          data-scroll
-          data-scroll-speed="2"
-          data-scroll-offset="-100%"
-          class="design-project-img"
-          alt=""
-        />
-
-        <text-element
-          title="Solution"
-          data-align="left"
           :paragraphs="formatText(project.paragraph2)"
         />
 
         <img
-          v-if="project.images[2]"
-          :src="project.images[2].url"
+          v-if="project.image2"
+          :src="project.image2.url"
+          loading="lazy"
+          data-align="left"
+          data-scroll
+          data-scroll-speed="2"
+          data-scroll-offset="-100%"
+          class="design-project-img"
+          alt=""
+        />
+
+        <text-element
+          :title="project.title3"
+          data-align="left"
+          :paragraphs="formatText(project.paragraph3)"
+        />
+
+        <img
+          v-if="project.image3"
+          :src="project.image3.url"
+          loading="lazy"
           data-align="right"
           data-scroll
           data-scroll-speed="2"
@@ -94,19 +97,42 @@
       </section>
     </article>
     <div id="design-selected-project-btm-btn-container" ref="btnContainer">
-      <transition name="fade">
-        <button
-          class="hover-underline"
-          v-if="scrolled"
-          v-on:click="scrollToTop"
-        >
-          .back to top
-        </button>
-      </transition>
+      <div>
+        <transition name="fade">
+          <button
+            class="hover-underline"
+            v-if="scrolled && !scrolledEnd"
+            v-on:click="e => navigate('prev')"
+          >
+            .prev
+          </button>
+        </transition>
+        <transition name="fade">
+          <button
+            class="hover-underline"
+            v-if="scrolled && !scrolledEnd"
+            v-on:click="e => navigate('next')"
+          >
+            .next
+          </button>
+        </transition>
+      </div>
 
-      <button class="hover-underline" v-on:click="close">
-        .close project
-      </button>
+      <div>
+        <transition name="fade">
+          <button
+            class="hover-underline"
+            v-if="scrolled"
+            v-on:click="scrollToTop"
+          >
+            .back to top
+          </button>
+        </transition>
+
+        <button class="hover-underline" v-on:click="close">
+          .close project
+        </button>
+      </div>
     </div>
   </fragment>
 </template>
@@ -153,6 +179,7 @@ export default {
     return {
       scroll: null,
       scrolled: false,
+      scrolledEnd: false,
       glOffset: {
         x: -8,
         y: -4,
@@ -217,7 +244,6 @@ export default {
       });
     },
     revealOnReachTop(e) {
-      console.log(e);
       if (e.speed >= 0) {
         this.transitionChange(this.tweenDuration, 1);
         this.scroll.off("scroll", this.revealOnReachTop);
@@ -245,11 +271,21 @@ export default {
       });
     },
     checkScrolled(e) {
-      if (!this.scrolled && e.scroll.y >= 25) {
+      if (!this.scrolled && e.scroll.y >= window.innerHeight / 2) {
         this.scrolled = true;
-      } else if (this.scrolled && e.scroll.y <= 25) {
+      } else if (this.scrolled && e.scroll.y <= window.innerHeight / 2) {
         this.scrolled = false;
       }
+      const endOffset =
+        this.$refs.page.clientHeight - e.scroll.y - window.innerHeight;
+      if (!this.scrolledEnd && endOffset <= 200) {
+        this.scrolledEnd = true;
+      } else if (this.scrolledEnd && endOffset >= 200) {
+        this.scrolledEnd = false;
+      }
+    },
+    checkScrolledToEnd() {
+      return this.$refs.page.clientHeight - this.scrollY <= 200;
     },
     getCurrentScrollY() {
       const { y, top } = this.$refs.page.getBoundingClientRect();
@@ -274,6 +310,7 @@ export default {
     }
   },
   mounted() {
+    console.log(this.project);
     this.setCameraTo({
       x: this.currentXOffset + this.glOffset.x,
       y: this.glOffset.y + this.index * 1.5,
@@ -358,13 +395,25 @@ export default {
 #design-selected-project-btm-btn-container {
   position: fixed;
   right: 6rem;
+  left: 6rem;
   bottom: 4rem;
   mix-blend-mode: difference;
   opacity: 0;
+  pointer-events: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+#design-selected-project-btm-btn-container div {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
+}
+
+#design-selected-project-btm-btn-container div:first-child {
+  align-items: flex-start;
 }
 
 #design-selected-project-btm-btn-container button {
@@ -376,6 +425,7 @@ export default {
   font-size: var(--font-size-small);
   mix-blend-mode: difference;
   margin-top: 0.5rem;
+  pointer-events: all;
 }
 
 #design-selected-project-btm-btn-container button:focus {
@@ -395,6 +445,6 @@ export default {
 }
 
 img[data-align] {
-  width: calc(100% - 16rem);
+  width: calc(100% - 8rem);
 }
 </style>
