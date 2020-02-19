@@ -54,6 +54,7 @@
 
 <script>
 import gsap, { Power2 } from "gsap";
+import { rem } from "../helpers/layout.js";
 import DesignProject from "./DesignProject.vue";
 export default {
   name: "design",
@@ -98,11 +99,7 @@ export default {
     return {
       selectedIndex: 0,
       selectionMade: false,
-      rem: parseInt(
-        window
-          .getComputedStyle(document.documentElement)
-          .fontSize.split("px")[0]
-      ),
+      rem: rem(),
       scrollY: 0,
       lockInput: true,
       cHeight: 0
@@ -153,9 +150,7 @@ export default {
     },
     closeProject() {
       this.selectionMade = false;
-      this.$nextTick(() => {
-        this.transitionResume();
-      });
+      this.$nextTick(this.transitionResume);
     },
     transitionResume() {
       this.scrollToImg(this.selectedIndex, 0);
@@ -175,7 +170,7 @@ export default {
           x: "-100%"
         },
         {
-          duration: 0.7,
+          duration: this.tweenDuration,
           x: 0,
           ease: Power2.easeOut,
           onComplete: () => {
@@ -290,13 +285,15 @@ export default {
       }
     }
   },
-  mounted() {
+  created() {
     this.setupGL();
-    this.transitionIn();
+  },
+  mounted() {
     this.cHeight = window
       .getComputedStyle(this.$refs.container)
       .getPropertyValue("height")
       .split("px")[0];
+    this.$nextTick(this.transitionIn);
   }
 };
 </script>

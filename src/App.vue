@@ -19,7 +19,6 @@
           setWireframeOpacity,
           gl,
           resetSelection,
-          useControls,
           currentXOffset,
           hideAllMeshesButOne,
           activeMesh,
@@ -58,7 +57,6 @@ import Menu from "./components/Menu.vue";
 import Development from "./vues/Development.vue";
 import Design from "./vues/Design.vue";
 import Photography from "./vues/Photography.vue";
-import PhotoCollection from "./components/PhotoCollection.vue";
 import CategoryWrapper from "./components/CategoryWrapper.vue";
 
 const app = {
@@ -86,10 +84,6 @@ const app = {
       {
         path: "/work/photo/",
         component: Photography
-      },
-      {
-        path: "/work/photo/collection/:id",
-        component: PhotoCollection
       }
     ]
   }),
@@ -110,7 +104,6 @@ const app = {
       tweenDuration: 0.7,
       loaded: false,
       gl: {
-        useControls: false,
         cameraTo: {
           x: 0,
           y: 0,
@@ -170,9 +163,6 @@ const app = {
         this.workSelect.activeIndex = index;
         this.setCameraTo({ x: index * this.gl.placementOffset });
       }
-    },
-    useControls(bool) {
-      this.gl.useControls = bool;
     },
     assignCorrectIndexOnSiteEnter() {
       const workRoutes = [
@@ -316,7 +306,7 @@ export default app;
 <style>
 * {
   box-sizing: border-box;
-  --white: #fff;
+  --white: #ffffff;
   --black: #000;
   --dark-grey: #4a4a4a;
   --light-grey: #b7b7b7;
@@ -330,6 +320,20 @@ export default app;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+*:focus {
+  outline-color: var(--white);
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+html,
+body {
+  background-color: var(--black);
+  overflow: hidden;
 }
 
 h1 {
@@ -357,6 +361,45 @@ h2 {
   display: block;
 }
 
+h3 {
+  font-family: "Monument";
+  position: relative;
+  font-size: 1rem;
+  margin: 0;
+  text-transform: uppercase;
+  font-weight: normal;
+  display: block;
+  color: var(--white);
+}
+
+p {
+  font-family: "Bw";
+  margin: 0;
+}
+
+hr {
+  border: none;
+  border-bottom: 1px solid var(--light-grey);
+  margin: 0;
+}
+
+button {
+  border: none;
+  padding: 0;
+  background: none;
+  color: var(--white);
+  cursor: pointer;
+}
+
+img {
+  object-fit: cover;
+}
+
+#app {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 .hover-underline {
   transition: 0.3s color linear;
   position: relative;
@@ -381,28 +424,6 @@ h2 {
 
 .hover-underline:hover {
   color: var(--light-grey) !important;
-}
-
-p {
-  font-family: "Bw";
-  margin: 0;
-}
-
-html {
-  background-color: var(--black);
-}
-
-#app {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-::-webkit-scrollbar {
-  display: none;
-}
-
-*:focus {
-  outline-color: var(--white);
 }
 
 .fillHover:hover {
@@ -435,5 +456,17 @@ html {
 .pagefade-enter,
 .pagefade-leave-to {
   opacity: 0;
+}
+
+[data-align="left"] {
+  align-self: flex-start;
+}
+
+[data-align="right"] {
+  align-self: flex-end;
+}
+
+[data-align="center"] {
+  align-self: center;
 }
 </style>

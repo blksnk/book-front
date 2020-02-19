@@ -1,0 +1,353 @@
+<template>
+  <fragment>
+    <section id="photo-collec-page" ref="page" data-scroll-container>
+      <section id="photo-collec-pres-page">
+        <div id="photo-collec-pres-left" data-scroll data-scroll-speed="0.5">
+          <h3 id="photo-collec-subtitle">
+            {{ collection.subtitle }}
+          </h3>
+          <hr />
+          <h1 id="photo-collec-title">
+            {{ collection.title }}
+          </h1>
+          <hr />
+          <h3 id="photo-collec-date">
+            {{ collection.date }}
+          </h3>
+        </div>
+
+        <img
+          data-scroll
+          data-scroll-speed="2"
+          id="photo-collec-pres-right"
+          :src="collection.thumbnail.url"
+        />
+      </section>
+
+      <section id="photo-collec-view-page" ref="secondPage">
+        <div id="photo-collec-view-left" data-scroll data-scroll-speed="2">
+          <agile
+            id="main-carousel"
+            ref="mainCarousel"
+            :options="options1"
+            :as-nav-for="asNavFor1"
+          >
+            <div
+              class="slide"
+              v-for="(slide, index) in collection.photos"
+              :key="index"
+              :class="`slide--${index}`"
+            >
+              <img :src="slide.url" />
+            </div>
+          </agile>
+          <agile
+            id="thumbnail-carousel"
+            ref="thumbnailCarousel"
+            :options="options2"
+            :as-nav-for="asNavFor2"
+          >
+            <div
+              class="slide slide--thumbniail"
+              v-for="(slide, index) in collection.photos"
+              :key="index"
+              :class="`slide--${index}`"
+              @click="$refs.thumbnailCarousel.goTo(index)"
+            >
+              <img :src="slide.url" />
+            </div>
+          </agile>
+        </div>
+        <div id="photo-collec-view-right">
+          <text-element
+            title="Description"
+            :paragraphs="collection.description"
+          />
+        </div>
+      </section>
+    </section>
+    <div id="btm-btn-container">
+      <div>
+        <transition name="fade">
+          <button
+            v-if="!scrolled"
+            class="hover-underline"
+            id="scrollDownBtn"
+            @click="scrollDown"
+          >
+            .view collection
+          </button>
+        </transition>
+      </div>
+
+      <div>
+        <button class="hover-underline" id="closeBtn" @click="transitionOut">
+          .close collection
+        </button>
+      </div>
+    </div>
+  </fragment>
+</template>
+<script>
+import TextElement from "../components/TextElement.vue";
+import { VueAgile } from "vue-agile";
+import { wHeight, getCurrentScrollY } from "../helpers/layout.js";
+import gsap, { Power2 } from "gsap";
+import locomotiveScroll from "locomotive-scroll";
+
+export default {
+  name: "PhotoCollection",
+  components: {
+    agile: VueAgile,
+    "text-element": TextElement
+  },
+  props: {
+    collection: {
+      type: Object
+    },
+    setCameraTo: {
+      type: Function
+    },
+    currentXOffset: {
+      type: Number,
+      default: 21
+    },
+    tweenDuration: {
+      type: Number,
+      default: 0.7
+    },
+    closeCollection: {
+      type: Function
+    }
+  },
+  data() {
+    return {
+      scroll: null,
+      scrolled: false,
+      asNavFor1: [],
+      asNavFor2: [],
+      options1: {
+        dots: false,
+        navButtons: false,
+        fade: true,
+        timing: "ease-in-out"
+      },
+      options2: {
+        autoplay: true,
+        timing: "ease-in-out",
+        autoplaySpeed: 5000,
+        centerMode: true,
+        infinite: true,
+        dots: false,
+        navButtons: false,
+        slidesToShow: 3,
+        responsive: [
+          {
+            breakpoint: 600,
+            settings: {
+              slidesToShow: 4
+            }
+          }
+        ]
+      }
+    };
+  },
+  methods: {
+    initLocomotive() {
+      this.scroll = new locomotiveScroll({
+        el: this.$refs.page,
+        smooth: true,
+        // smoothMobile: true,
+        inertia: 0.8,
+        getSpeed: true
+      });
+      this.scroll.on("scroll", e => this.checkScrolled(e));
+    },
+    updateLS() {
+      if (this.scroll) {
+        this.scroll.update();
+      }
+    },
+    scrollDown() {
+      this.scroll.scrollTo(this.$refs.secondPage);
+    },
+    checkScrolled(e) {
+      //second
+      if (e.scroll.y >= wHeight() / 2 && !this.scrolled) {
+        this.scrolled = true;
+        this.adjustGL(true);
+        //first
+      } else if (e.scroll.y <= wHeight() / 2 && this.scrolled) {
+        this.scrolled = false;
+        this.adjustGL(false);
+      }
+    },
+    setScrolled(bool) {
+      this.scrolled = bool;
+    },
+    adjustGL(scrolled) {
+      this.setScrolled(scrolled);
+      if (scrolled) {
+        this.setCameraTo({
+          x: this.currentXOffset - 6,
+          y: 2,
+          z: 8
+        });
+      } else {
+        this.setCameraTo({
+          x: this.currentXOffset,
+          y: -4,
+          z: 4
+        });
+      }
+    },
+    transitionIn(callback) {
+      gsap.to(this.$refs.page, {
+        duration: this.tweenDuration * 2,
+        y: 0,
+        ease: Power2.easeOut,
+        onComplete: callback || null
+      });
+    },
+    transitionOut() {
+      this.scroll.destroy();
+      gsap.fromTo(
+        this.$refs.page,
+        {
+          y: getCurrentScrollY(this.$refs.page)
+        },
+        {
+          y: "100vh",
+          duration: this.tweenDuration,
+          ease: Power2.easeIn,
+          onComplete: this.closeCollection
+        }
+      );
+    }
+  },
+  mounted() {
+    this.asNavFor1.push(this.$refs.thumbnailCarousel);
+    this.asNavFor2.push(this.$refs.mainCarousel);
+    this.adjustGL(false);
+    this.$nextTick(() => {
+      this.transitionIn(() => {
+        this.initLocomotive();
+      });
+    });
+  }
+};
+</script>
+<style>
+#photo-collec-page {
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  background-color: var(--black);
+  transform: translateY(100vh);
+}
+
+#photo-collec-pres-page {
+  height: 100vh;
+  width: 100%;
+  padding-top: var(--padding-top);
+  display: grid;
+  grid-template-columns: 60% 40%;
+}
+
+#photo-collec-pres-left {
+  padding-top: calc(var(--padding-top) - 2rem);
+  padding-left: var(--padding-horizontal);
+  padding-right: var(--padding-horizontal);
+  z-index: 5;
+}
+
+#photo-collec-title {
+  position: relative;
+  width: calc(100vw - 12rem);
+  color: var(--white);
+  margin-top: 0.5rem;
+  text-align: left;
+  z-index: 5;
+}
+
+#photo-collec-subtitle {
+  text-align: left;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  z-index: 5;
+}
+
+#photo-collec-date {
+  margin-top: 1rem;
+  text-align: right;
+  z-index: 5;
+}
+
+#photo-collec-pres-right {
+  width: 100%;
+  height: 100%;
+  filter: brightness(0.8);
+  z-index: 1;
+}
+
+#photo-collec-view-page {
+  height: 100vh;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 60% 40%;
+  margin-top: var(--padding-top);
+}
+
+#photo-collec-view-left {
+  height: 100%;
+}
+
+.slide {
+  height: 100%;
+  width: 100%;
+}
+
+.slide img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.agile__list,
+.agile__track {
+  height: 100%;
+}
+
+#main-carousel {
+  height: calc(100vh - var(--padding-top));
+}
+
+#thumbnail-carousel {
+  height: var(--padding-top);
+}
+
+#photo-collec-view-right {
+  padding: var(--page-padding);
+  padding-top: calc(var(--padding-top) + 6rem);
+}
+
+#btm-btn-container {
+  position: fixed;
+  bottom: 4rem;
+  left: 6rem;
+  right: 6rem;
+  pointer-events: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+#scrollDownBtn,
+#closeBtn {
+  z-index: 6;
+  pointer-events: all;
+}
+</style>

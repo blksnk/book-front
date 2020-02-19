@@ -5,7 +5,6 @@
 <script>
 import CategoryWrapper from "./CategoryWrapper.vue";
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 const gl = {
   name: "GL",
@@ -85,7 +84,11 @@ const gl = {
       this.container = document.getElementById("gl-mount");
       const horizontalFov = 110;
       const aspect = window.innerWidth / window.innerHeight;
-      const fov = (Math.atan(Math.tan(((horizontalFov / 2) * Math.PI) / 180) / aspect) * 2 * 180) / Math.PI;
+      const fov =
+        (Math.atan(Math.tan(((horizontalFov / 2) * Math.PI) / 180) / aspect) *
+          2 *
+          180) /
+        Math.PI;
       this.camera = new THREE.PerspectiveCamera(
         fov,
         window.innerWidth / window.innerHeight,
@@ -96,28 +99,7 @@ const gl = {
       this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       this.renderer.setClearColor(0x000000, 0);
       this.sizeRenderer();
-      this.setupControls();
       this.container.appendChild(this.renderer.domElement);
-    },
-    setupControls: function() {
-      this.controls = new OrbitControls(
-        this.activeMesh,
-        this.renderer.domElement
-      );
-      this.controls.autoRotate = false;
-      this.controls.enableDamping = true;
-      this.controls.dampingFactor = 0.25;
-      this.controls.enabled = this.gl.useControls;
-    },
-    toggleControls: function() {
-      if (this.gl.useControls && !this.controls.enabled) {
-        this.controls.enabled = true;
-      } else if (!this.gl.useControls) {
-        this.controls.enabled = false;
-      }
-    },
-    updateControlsTarget: function(target) {
-      this.controls.target = target;
     },
     sizeRenderer: function() {
       const width = window.innerWidth;
@@ -132,7 +114,6 @@ const gl = {
       this.rotateMeshes();
 
       this.moveCameraAxis(this.gl.cameraTo);
-      this.toggleControls();
       this.redirectWhenAnimationDone();
       this.renderer.render(this.gl.scene, this.camera);
     },
@@ -158,10 +139,6 @@ const gl = {
       if (changeY === 0.05) {
         this.camera.position.z = z;
       }
-
-      if (this.gl.useControls) {
-        this.controls.update();
-      }
     },
     redirectWhenAnimationDone: function() {
       const { selectionMade, redirectDone, redirectToUrl } = this.workSelect;
@@ -182,13 +159,6 @@ const gl = {
       this.frameId = null;
       window.removeEventListener("resize", this.sizeRenderer);
       this.container.removeChild(this.renderer.domElement);
-    }
-  },
-  watch: {
-    activeMesh: function(next, prev) {
-      if (next !== prev) {
-        this.updateControlsTarget(next);
-      }
     }
   },
   mounted() {

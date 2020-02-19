@@ -24,14 +24,13 @@
         <text-element
           :title="project.title1"
           data-align="left"
-          :paragraphs="formatText(project.paragraph1)"
+          :paragraphs="project.paragraph1"
         />
         <!-- <text-element title="Date" data-align="right" :paragraphs="[project.date]"/> -->
 
         <img
           v-if="project.image1"
           :src="project.image1.url"
-          loading="lazy"
           data-scroll
           data-scroll-speed="2"
           data-scroll-offset="-100%"
@@ -42,13 +41,12 @@
         <text-element
           :title="project.title2"
           data-align="right"
-          :paragraphs="formatText(project.paragraph2)"
+          :paragraphs="project.paragraph2"
         />
 
         <img
           v-if="project.image2"
           :src="project.image2.url"
-          loading="lazy"
           data-align="left"
           data-scroll
           data-scroll-speed="2"
@@ -60,13 +58,12 @@
         <text-element
           :title="project.title3"
           data-align="left"
-          :paragraphs="formatText(project.paragraph3)"
+          :paragraphs="project.paragraph3"
         />
 
         <img
           v-if="project.image3"
           :src="project.image3.url"
-          loading="lazy"
           data-align="right"
           data-scroll
           data-scroll-speed="2"
@@ -142,6 +139,7 @@ import gsap, { Power2 } from "gsap";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin.js";
 import locomotiveScroll from "locomotive-scroll";
 import TextElement from "../components/TextElement.vue";
+import { rem, wHeight, wWidth, getCurrentScrollY } from "../helpers/layout.js";
 
 gsap.registerPlugin(ScrollToPlugin);
 
@@ -210,7 +208,7 @@ export default {
       }
     },
     close() {
-      const y = this.getCurrentScrollY();
+      const y = getCurrentScrollY(this.$refs.page);
       gsap.fromTo(
         this.$refs.page,
         {
@@ -249,10 +247,6 @@ export default {
         this.scroll.off("scroll", this.revealOnReachTop);
       }
     },
-    formatText(paragraph) {
-      const formatted = paragraph.split("\n").filter(item => item !== "");
-      return formatted;
-    },
     transitionIn() {
       gsap.to(this.$refs.page, {
         duration: this.tweenDuration,
@@ -286,10 +280,6 @@ export default {
     },
     checkScrolledToEnd() {
       return this.$refs.page.clientHeight - this.scrollY <= 200;
-    },
-    getCurrentScrollY() {
-      const { y, top } = this.$refs.page.getBoundingClientRect();
-      return Math.max(y, top);
     }
   },
   watch: {
@@ -309,8 +299,12 @@ export default {
       });
     }
   },
+  computed: {
+    wHeight: () => wHeight(),
+    wWidth: () => wWidth(),
+    rem: () => rem()
+  },
   mounted() {
-    console.log(this.project);
     this.setCameraTo({
       x: this.currentXOffset + this.glOffset.x,
       y: this.glOffset.y + this.index * 1.5,
@@ -357,6 +351,7 @@ export default {
 #design-selected-project-title {
   opacity: 0;
   margin-bottom: 6rem;
+  color: var(--white);
 }
 
 .design-project-img {
@@ -430,18 +425,6 @@ export default {
 
 #design-selected-project-btm-btn-container button:focus {
   outline: none;
-}
-
-[data-align="left"] {
-  align-self: flex-start;
-}
-
-[data-align="right"] {
-  align-self: flex-end;
-}
-
-[data-align="center"] {
-  align-self: center;
 }
 
 img[data-align] {

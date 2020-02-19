@@ -12,7 +12,7 @@
       <div class="text-element-paragraph-container">
         <p
           class="text-element-paragraph"
-          v-for="(paragraph, index) in paragraphs"
+          v-for="(paragraph, index) in formattedParagraphs"
           v-bind:key="paragraph + index"
         >
           {{ paragraph }}
@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import { formatParagraphs } from "../helpers/layout.js";
+
 export default {
   name: "text-element",
   props: {
@@ -31,12 +33,17 @@ export default {
       default: "Default Title"
     },
     paragraphs: {
-      type: Array,
-      default: () => ["this is the default paragraph array"]
+      type: String,
+      default: "default paragraph"
     },
     speed: {
       type: Number,
       default: 1
+    }
+  },
+  computed: {
+    formattedParagraphs() {
+      return formatParagraphs(this.paragraphs);
     }
   }
 };
@@ -45,8 +52,9 @@ export default {
 <style>
 .text-element {
   display: grid;
-  grid-template-columns: 16rem 16rem;
+  grid-template-columns: 8rem 16rem;
   grid-auto-rows: auto;
+  margin-right: 8rem;
   margin-bottom: 4rem;
   z-index: 5;
 }
