@@ -1,22 +1,23 @@
 <template>
   <section id="photo-page" ref="page">
-    <div id="photo-grid" ref="grid" v-if="show && !selectionMade">
+    <div id="photo-grid" ref="grid" v-if="!selectionMade">
       <div
         class="photo-row"
-        v-for="(row, rowIndex) in rows"
+        v-for="(row, rowIndex) in siteData.photo"
         v-bind:key="'photo-row-' + rowIndex"
         data-scroll-section
       >
         <img
-          v-on:click="() => selectCollection(row[0].id)"
+          v-on:click="() => selectCollection(rowIndex, 0)"
           class="photo-item"
+          decoding="async"
           :src="row[0].thumbnail.url"
           data-scroll
           data-scroll-speed="0"
         />
         <img
           v-if="row[1]"
-          v-on:click="() => selectCollection(row[1].id)"
+          v-on:click="() => selectCollection(rowIndex, 1)"
           class="photo-item"
           :src="row[1].thumbnail.url"
           data-scroll
@@ -25,7 +26,7 @@
       </div>
     </div>
     <photo-collection
-      v-if="show && selectionMade"
+      v-if="selectionMade"
       v-bind="{
         collection: selectedCollection,
         setCameraTo,
@@ -37,9 +38,8 @@
 </template>
 
 <script>
-import locomotiveScroll from "locomotive-scroll";
 import PhotoCollection from "./PhotoCollection.vue";
-import { wHeight } from "../helpers/layout.js";
+import { wHeight, initLS } from "../helpers/layout.js";
 import gsap, { Power2 } from "gsap";
 export default {
   name: "Photography",
@@ -74,7 +74,6 @@ export default {
   data() {
     return {
       rows: [],
-      show: false,
       scroll: null,
       selectionMade: false,
       selectedCollection: null
@@ -86,41 +85,15 @@ export default {
       this.setActiveMeshAsTransparentWireframe();
       this.setCameraTo({
         x: this.currentXOffset,
-        y: -4,
-        z: 4
-      });
-    },
-    createRows() {
-      const rows = this.siteData.photo.reduce(function(
-        result,
-        value,
-        index,
-        array
-      ) {
-        if (index % 2 === 0) result.push(array.slice(index, index + 2));
-        return result;
-      },
-      []);
-      this.rows = rows;
-      this.show = true;
-      this.$nextTick(() => {
-        this.setupGL();
-        this.transitionIn(() => this.scroll.update());
+        y: -4.5,
+        z: 6
       });
     },
     initLocomotive() {
-      this.scroll = new locomotiveScroll({
-        el: this.$refs.page,
-        smooth: true,
-        smoothMobile: true,
-        inertia: 0.8,
-        getSpeed: true
-      });
+      this.scroll = initLS(this.$refs.page);
     },
-    selectCollection(id) {
-      this.selectedCollection = this.siteData.photo.find(
-        collection => collection.id === id
-      );
+    selectCollection(rowIndex, collectionIndex) {
+      this.selectedCollection = this.siteData.photo[rowIndex][collectionIndex];
       this.scroll.destroy();
       this.transitionSelect();
     },
@@ -139,7 +112,6 @@ export default {
       this.$nextTick(() => this.transitionIn(() => this.scroll.init()));
     },
     transitionIn(callback) {
-      this.setupGL();
       gsap.fromTo(
         this.$refs.grid,
         {
@@ -155,10 +127,15 @@ export default {
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      this.createRows();
-      this.initLocomotive();
-    });
+    setTimeout(() => {
+      this.$nextTick(() => {
+        this.setupGL();
+        this.transitionIn(this.initLocomotive);
+      });
+    }, 200);
+  },
+  beforeDestroy() {
+    this.scroll.destroy();
   },
   watch: {
     siteData: function() {
@@ -180,6 +157,7 @@ export default {
   display: grid;
   grid-template-columns: 1fr;
   grid-gap: 2rem;
+  transform: translateY(-300vh);
 }
 
 .photo-row {
