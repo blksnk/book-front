@@ -41,22 +41,32 @@
               <img :src="slide.url" />
             </div>
           </agile>
-          <agile
-            id="thumbnail-carousel"
-            ref="thumbnailCarousel"
-            :options="options2"
-            :as-nav-for="asNavFor2"
-          >
-            <div
-              class="slide slide--thumbniail"
-              v-for="(slide, index) in collection.photos"
-              :key="index"
-              :class="`slide--${index}`"
-              @click="$refs.thumbnailCarousel.goTo(index)"
+          <div id="carousel-controls">
+            <agile
+              id="thumbnail-carousel"
+              ref="thumbnailCarousel"
+              :options="options2"
+              :as-nav-for="asNavFor2"
             >
-              <img :src="slide.url" />
+              <div
+                class="slide slide--thumbniail"
+                v-for="(slide, index) in collection.photos"
+                :key="index"
+                :class="`slide--${index}`"
+                @click="$refs.thumbnailCarousel.goTo(index)"
+              >
+                <img :src="slide.url" />
+              </div>
+            </agile>
+            <div id="carousel-btns">
+              <button @click="$refs.mainCarousel.goToPrev()">
+                <ion-icon name="chevron-back-sharp"></ion-icon>
+              </button>
+              <button @click="$refs.mainCarousel.goToNext()">
+                <ion-icon name="chevron-forward-sharp"></ion-icon>
+              </button>
             </div>
-          </agile>
+          </div>
         </div>
         <div id="photo-collec-view-right">
           <text-element
@@ -66,7 +76,7 @@
         </div>
       </section>
     </section>
-    <div id="btm-btn-container">
+    <div id="btm-btn-container" ref="btnContainer">
       <div>
         <transition name="fade">
           <button
@@ -80,20 +90,21 @@
         </transition>
       </div>
 
-      <div>
-        <button class="hover-underline" id="closeBtn" @click="transitionOut">
-          .close collection
-        </button>
-      </div>
+      <transition name="fade">
+        <div>
+          <button class="hover-underline" id="closeBtn" @click="transitionOut">
+            .close collection
+          </button>
+        </div>
+      </transition>
     </div>
   </fragment>
 </template>
 <script>
 import TextElement from "../components/TextElement.vue";
 import { VueAgile } from "vue-agile";
-import { wHeight, getCurrentScrollY } from "../helpers/layout.js";
+import { wHeight, getCurrentScrollY, initLS } from "../helpers/layout.js";
 import gsap, { Power2 } from "gsap";
-import locomotiveScroll from "locomotive-scroll";
 
 export default {
   name: "PhotoCollection",
@@ -145,7 +156,7 @@ export default {
           {
             breakpoint: 600,
             settings: {
-              slidesToShow: 4
+              slidesToShow: 3
             }
           }
         ]
@@ -154,14 +165,7 @@ export default {
   },
   methods: {
     initLocomotive() {
-      this.scroll = new locomotiveScroll({
-        el: this.$refs.page,
-        smooth: true,
-        // smoothMobile: true,
-        inertia: 0.8,
-        getSpeed: true
-      });
-      this.scroll.on("scroll", e => this.checkScrolled(e));
+      this.scroll = initLS(this.$refs.page, this.checkScrolled);
     },
     updateLS() {
       if (this.scroll) {
@@ -189,15 +193,15 @@ export default {
       this.setScrolled(scrolled);
       if (scrolled) {
         this.setCameraTo({
-          x: this.currentXOffset - 6,
+          x: this.currentXOffset - 5,
           y: 2,
-          z: 8
+          z: 9
         });
       } else {
         this.setCameraTo({
           x: this.currentXOffset,
-          y: -4,
-          z: 4
+          y: -4.5,
+          z: 6
         });
       }
     },
@@ -207,6 +211,10 @@ export default {
         y: 0,
         ease: Power2.easeOut,
         onComplete: callback || null
+      });
+      gsap.to(this.$refs.btnContainer, {
+        duration: this.tweenDuration,
+        opacity: 1
       });
     },
     transitionOut() {
@@ -223,6 +231,10 @@ export default {
           onComplete: this.closeCollection
         }
       );
+      gsap.to(this.$refs.btnContainer, {
+        duration: this.tweenDuration,
+        opacity: 0
+      });
     }
   },
   mounted() {
@@ -234,6 +246,9 @@ export default {
         this.initLocomotive();
       });
     });
+  },
+  beforeDestroy() {
+    this.scroll.destroy();
   }
 };
 </script>
@@ -325,8 +340,49 @@ export default {
   height: calc(100vh - var(--padding-top));
 }
 
-#thumbnail-carousel {
+#carousel-controls {
   height: var(--padding-top);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+#thumbnail-carousel {
+  height: 100%;
+  width: 75%;
+  flex: 0.75;
+}
+
+#carousel-btns {
+  height: 100%;
+  flex: 0.25;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+#carousel-btns button {
+  padding: 0;
+  height: 100%;
+  width: 50%;
+  flex: 1;
+  border: none;
+}
+
+#carousel-btns button:hover {
+  filter: invert(1);
+}
+
+#carousel-btns ion-icon {
+  height: 1.5rem;
+  width: 1.5rem;
+  font-size: 1.5rem;
+  color: var(--white);
+}
+
+#carousel-btns button:hover ion-icon {
+  color: var(--dark-grey);
 }
 
 #photo-collec-view-right {
@@ -343,6 +399,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  opacity: 0;
 }
 
 #scrollDownBtn,
