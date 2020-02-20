@@ -74,6 +74,7 @@
 
         <section
           id="design-project-navigation"
+          v-if="listLength > 1"
           data-scroll
           data-scroll-speed="0.7"
           data-scroll-offset="-100%"
@@ -98,7 +99,7 @@
         <transition name="fade">
           <button
             class="hover-underline"
-            v-if="scrolled && !scrolledEnd"
+            v-if="scrolled && !scrolledEnd && listLength > 1"
             v-on:click="e => navigate('prev')"
           >
             .prev
@@ -107,7 +108,7 @@
         <transition name="fade">
           <button
             class="hover-underline"
-            v-if="scrolled && !scrolledEnd"
+            v-if="scrolled && !scrolledEnd && listLength > 1"
             v-on:click="e => navigate('next')"
           >
             .next
@@ -137,9 +138,14 @@
 <script>
 import gsap, { Power2 } from "gsap";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin.js";
-import locomotiveScroll from "locomotive-scroll";
 import TextElement from "../components/TextElement.vue";
-import { rem, wHeight, wWidth, getCurrentScrollY } from "../helpers/layout.js";
+import {
+  rem,
+  wHeight,
+  wWidth,
+  getCurrentScrollY,
+  initLS
+} from "../helpers/layout.js";
 
 gsap.registerPlugin(ScrollToPlugin);
 
@@ -168,6 +174,10 @@ export default {
     },
     closeProject: {
       type: Function
+    },
+    listLength: {
+      type: Number,
+      default: 1
     }
   },
   components: {
@@ -181,20 +191,13 @@ export default {
       glOffset: {
         x: -8,
         y: -4,
-        z: 8
+        z: 11
       }
     };
   },
   methods: {
     initLocomotive() {
-      this.scroll = new locomotiveScroll({
-        el: this.$refs.page,
-        smooth: true,
-        smoothMobile: true,
-        inertia: 0.8,
-        getSpeed: true
-      });
-      this.scroll.on("scroll", this.checkScrolled);
+      this.scroll = initLS(this.$refs.page, this.checkScrolled);
     },
     navigate(dir) {
       this.transitionChange(0.2, 0, () => this.navigateProject(dir));
