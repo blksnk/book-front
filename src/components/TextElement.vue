@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="text-element"
-    data-scroll
-    :data-scroll-speed="speed"
-    data-scroll-offset="-100%"
-  >
+  <div class="text-element" data-scroll :data-scroll-speed="speed || '1'">
     <transition name="fade">
       <span class="text-element-title">{{ title }}</span>
     </transition>
@@ -34,7 +29,9 @@ export default {
     },
     paragraphs: {
       type: String,
-      default: "default paragraph"
+      default: `Dolore commodo non ullamco dolore dolor sed cillum aliquip occaecat qui proident enim laborum irure irure dolor cupidatat in duis ut aliqua esse veniam dolor irure in labore id cupidatat adipisicing minim amet quis ut ad minim velit.
+
+        Lorem ipsum culpa sunt non veniam consequat non voluptate nulla est incididunt.`
     },
     speed: {
       type: Number,
