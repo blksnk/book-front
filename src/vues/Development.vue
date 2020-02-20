@@ -1,26 +1,59 @@
 <template>
-  <section id="dev-page">
-    <DevWork
-      v-for="(work, index) in siteData.dev"
-      v-bind="{
-        work,
-        index,
-        expandedIndex,
-        expanded,
-        toggleExpand,
-        formattedIndex: formatIndex(index + 1)
-      }"
-      v-bind:key="'dev-work-' + index"
-    />
+  <section id="dev-page" ref="page">
+    <div id="dev-intro" data-scroll-section data-scroll-speed="1">
+      <text-element
+        title="Overview"
+        :paragraphs="
+          `Lorem ipsum ad anim pariatur labore irure consequat in sed ullamco elit culpa magna ad culpa reprehenderit mollit deserunt in cupidatat amet exercitation magna eiusmod dolore eiusmod.
+
+        Mollit ut irure irure sit duis nulla labore adipisicing magna amet sit reprehenderit ut sint sint.`
+        "
+      />
+    </div>
+    <div id="dev-projects" data-scroll-section>
+      <h3 data-scroll data-scroll-speed="1">selected projects</h3>
+      <hr data-scroll data-scroll-speed="1" />
+      <h2
+        data-scroll
+        data-scroll-speed="2"
+        class="fill-hover cursor-pointer"
+        v-for="(project, index) in siteData.dev"
+        :key="'dev-project-' + index"
+      >
+        {{ project.title }}
+      </h2>
+    </div>
+    <div id="dev-outro" data-scroll-section>
+      <text-element
+        title="Going further"
+        :paragraphs="
+          `I currently work as a freelance web developer.
+
+        Click on the link below to visit my development-oriented website.`
+        "
+      />
+
+      <a
+        id="dev-link"
+        class="hover-underline"
+        href="https://veigel.dev"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-scroll
+        data-scroll-speed="2"
+        >Go to dev website</a
+      >
+    </div>
   </section>
 </template>
 
 <script>
-import DevWork from "../components/DevWork.vue";
+import TextElement from "../components/TextElement.vue";
+import { initLS } from "../helpers/layout.js";
 export default {
   name: "Development",
   components: {
-    DevWork
+    "text-element": TextElement
   },
   props: {
     setCameraTo: {
@@ -62,42 +95,56 @@ export default {
       this.setCameraTo({ z: 5, x: 5.5 });
       this.hideAllMeshesButOne(this.activeMesh);
       this.setActiveMeshAsWireframe();
-      this.activeMesh.material = this.gl.materials.wireframeMaterial;
     },
-    formatIndex: function(index) {
-      if (!index) {
-        return "00";
-      } else if (index < 10) {
-        return `0${index}`;
-      } else {
-        return String(index);
-      }
-    },
-    toggleExpand: function(index) {
-      if (!this.expanded) {
-        this.expandedIndex = index;
-        this.expanded = true;
-      } else if (this.expandedIndex !== index) {
-        this.expandedIndex = index;
-      } else {
-        this.expanded = false;
-      }
+    initLocomotive() {
+      this.scroll = initLS(this.$refs.page);
     }
   },
   mounted() {
     this.setupGL();
+    this.$nextTick(this.initLocomotive);
+  },
+  beforeDestroy() {
+    this.scroll.destroy();
   }
 };
 </script>
 
 <style scoped>
 #dev-page {
-  min-height: 100vh;
   width: 100%;
-  padding: var(--page-padding);
-  /* background-color: var(--black); */
+  padding-top: var(--padding-top);
+  padding-bottom: var(--padding-bottom);
   display: grid;
-  grid-template-columns: auto min-content;
+  grid-template-columns: 40% 60%;
   grid-auto-rows: max-content;
+}
+#dev-intro {
+  grid-column: 2 / 2;
+  padding-right: var(--padding-horizontal);
+}
+
+#dev-projects {
+  grid-column: 2 / 2;
+  padding-right: var(--padding-horizontal);
+  margin-bottom: 4rem;
+}
+
+#dev-projects hr {
+  margin-bottom: 1rem;
+}
+
+#dev-outro {
+  grid-column: 2 / 2;
+  padding-right: var(--padding-horizontal);
+  margin-bottom: 4rem;
+}
+
+#dev-link {
+  color: var(--white);
+  font-weight: 800;
+  text-decoration: none;
+  margin-top: 8rem;
+  margin-left: 8rem;
 }
 </style>
