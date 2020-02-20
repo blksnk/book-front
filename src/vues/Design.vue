@@ -42,6 +42,7 @@
       v-bind="{
         project: selectedProject,
         index: selectedIndex,
+        listLength: siteData.design.length,
         navigateProject,
         setCameraTo,
         currentXOffset,
@@ -121,7 +122,7 @@ export default {
     },
     setupCamera() {
       this.setCameraTo({
-        z: 6,
+        z: 8,
         x: this.currentXOffset - 2.5,
         y: 4
       });
@@ -285,15 +286,18 @@ export default {
       }
     }
   },
-  created() {
-    this.setupGL();
-  },
   mounted() {
     this.cHeight = window
       .getComputedStyle(this.$refs.container)
       .getPropertyValue("height")
       .split("px")[0];
-    this.$nextTick(this.transitionIn);
+
+    setTimeout(() => {
+      this.$nextTick(() => {
+        this.setupGL();
+        this.transitionIn();
+      });
+    }, 300);
   }
 };
 </script>
@@ -315,7 +319,7 @@ export default {
   grid-row-gap: 1rem;
   padding-top: 4rem;
   right: var(--padding-horizontal);
-  left: calc(30% + var(--padding-horizontal));
+  left: calc(40% + var(--padding-horizontal));
   top: var(--padding-top);
   transform: translateY(100vh);
   z-index: 22 !important;
