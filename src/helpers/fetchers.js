@@ -1,7 +1,7 @@
 import axios from "axios";
 const api = process.env.VUE_APP_API_URL;
 
-export async function fetch(cat, format, formatFunction) {
+export async function fetch(cat, formatDefault, formatFunction) {
   let url;
   switch (cat) {
     case "dev":
@@ -23,14 +23,25 @@ export async function fetch(cat, format, formatFunction) {
     axios
       .get(api + url)
       .then(res => {
-        if (!format) {
+        if (!formatDefault) {
           return resolve(res.data);
         }
-        if (formatFunction && formatFunction instanceof Function) {
+        if (
+          formatFunction &&
+          formatFunction instanceof Function &&
+          !formatDefault
+        ) {
           return resolve(formatFunction(res.data));
         }
-        if (format && !formatFunction) {
-          return resolve(formatDefault(res.data));
+        if (
+          formatDefault &&
+          formatFunction &&
+          formatFunction instanceof Function
+        ) {
+          return resolve(formatFunction(defaultFormatter(res.data)));
+        }
+        if (formatDefault && !formatFunction) {
+          return resolve(defaultFormatter(res.data));
         }
       })
       .catch(e => {
@@ -40,7 +51,7 @@ export async function fetch(cat, format, formatFunction) {
   });
 }
 
-export function formatDefault(data) {
+export function defaultFormatter(data) {
   const formatted = data.map(item => {
     let n = item;
     if (item.thumbnail) {
@@ -71,4 +82,12 @@ export function formatMediaUrl(media) {
     ...media,
     url: api + media.url
   };
+}
+
+export function formatIntoRows(data) {
+  const rows = data.reduce(function(result, value, index, array) {
+    if (index % 2 === 0) result.push(array.slice(index, index + 2));
+    return result;
+  }, []);
+  return rows;
 }
