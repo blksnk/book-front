@@ -35,16 +35,16 @@ export default {
     gl: {
       type: Object
     },
-    setWireframeOpacity: {
-      type: Function
-    },
     setCameraTo: {
       type: Function
     },
-    useControls: {
+    resetSelection: {
       type: Function
     },
-    resetSelection: {
+    setActiveIndex: {
+      type: Function
+    },
+    selectCategory: {
       type: Function
     }
   },
@@ -76,23 +76,18 @@ export default {
   },
   methods: {
     onClick: function(url) {
-      this.$router.app.selectCategory(url);
+      this.selectCategory(url);
     },
     onHover: function(index) {
-      this.$router.app.setActiveIndex(index);
+      this.setActiveIndex(index);
     },
     setupGL: function() {
-      this.setWireframeOpacity(1);
       this.setCameraTo({
         x: this.workSelect.activeIndex * this.gl.placementOffset,
         y: 0,
-        z: 4
+        z: 6
       });
       this.resetSelection();
-      this.useControls(false);
-    },
-    handleEvent(payload) {
-      console.log(payload);
     }
   },
   mounted() {
