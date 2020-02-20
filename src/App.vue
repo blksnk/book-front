@@ -18,12 +18,15 @@
           workSelect,
           setWireframeOpacity,
           gl,
+          selectCategory,
+          setActiveIndex,
           resetSelection,
           currentXOffset,
           hideAllMeshesButOne,
           activeMesh,
           setActiveMeshAsWireframe,
           setActiveMeshAsTransparentWireframe,
+          setAllMeshesAsTransparentWireframe,
           tweenDuration
         }"
       ></router-view>
@@ -36,7 +39,8 @@
         setActiveIndex,
         highlightMesh,
         activeMesh,
-        currentXOffset
+        currentXOffset,
+        disableWorkSelect
       }"
     />
   </main>
@@ -49,7 +53,8 @@ import "./scss/fonts.scss";
 import VueRouter from "vue-router";
 import * as THREE from "three";
 
-import { fetch } from "./helpers/fetchers.js";
+import { fetch, formatIntoRows } from "./helpers/fetchers.js";
+import { degToRad } from "./helpers/math.js";
 
 import GL from "./components/GL.vue";
 import Menu from "./components/Menu.vue";
@@ -58,6 +63,7 @@ import Development from "./vues/Development.vue";
 import Design from "./vues/Design.vue";
 import Photography from "./vues/Photography.vue";
 import CategoryWrapper from "./components/CategoryWrapper.vue";
+import About from "./vues/About.vue";
 
 const app = {
   name: "app",
@@ -84,6 +90,10 @@ const app = {
       {
         path: "/work/photo/",
         component: Photography
+      },
+      {
+        path: "/about",
+        component: About
       }
     ]
   }),
@@ -107,7 +117,12 @@ const app = {
         cameraTo: {
           x: 0,
           y: 0,
-          z: 4
+          z: 6,
+          r: {
+            x: 0,
+            y: 0,
+            z: 0
+          }
         },
         materials: {
           wireframeMaterial: new THREE.MeshBasicMaterial({
@@ -139,8 +154,8 @@ const app = {
         geos: [
           new THREE.IcosahedronBufferGeometry(2, 1),
           new THREE.SphereBufferGeometry(2, 15, 15),
-          new THREE.OctahedronBufferGeometry(2, 2),
           new THREE.TetrahedronBufferGeometry(2, 3),
+          new THREE.OctahedronBufferGeometry(2, 2),
           new THREE.DodecahedronBufferGeometry(2, 1)
         ],
         meshes: [],
@@ -235,6 +250,12 @@ const app = {
     setWireframeOpacity(opacity) {
       this.gl.materials.wireframeMaterial.opacity = opacity;
     },
+    disableWorkSelect() {
+      this.workSelect = {
+        ...this.workSelect,
+        selectionMade: true
+      };
+    },
     selectCategory(url) {
       this.workSelect = {
         ...this.workSelect,
@@ -251,24 +272,61 @@ const app = {
       this.resetMeshMaterials(this.activeMesh);
     },
     setActiveMeshAsTransparentWireframe() {
-      this.activeMesh.children[0].material = this.gl.materials.transparentMaterial;
+      this.setMeshAsTransparentWireframe(this.activeMesh);
+    },
+    setAllMeshesAsTransparentWireframe() {
+      const { length } = this.gl.meshes;
+      for (let i = 0; i < length; i++) {
+        this.setMeshAsTransparentWireframe(this.gl.meshes[i]);
+      }
+    },
+    setMeshAsTransparentWireframe(mesh) {
+      mesh.children[0].material = this.gl.materials.transparentMaterial;
     },
     setRedirectDone(bool) {
       this.workSelect.redirectDone = bool;
     },
-    setCameraTo(to) {
-      let coords = {
-        x: to.x || this.gl.cameraTo.x,
-        y: to.y || this.gl.cameraTo.y,
-        z: to.z || this.gl.cameraTo.z
-      };
+    formatCameraTo(to, isRotation) {
+      let coords = {};
+      if (isRotation) {
+        coords = {
+          x: degToRad(to.x) || this.gl.cameraTo.r.x,
+          y: degToRad(to.y) || this.gl.cameraTo.r.y,
+          z: degToRad(to.z) || this.gl.cameraTo.r.z
+        };
+      } else {
+        coords = {
+          x: to.x || this.gl.cameraTo.x,
+          y: to.y || this.gl.cameraTo.y,
+          z: to.z || this.gl.cameraTo.z
+        };
+      }
       if (to.x === 0) {
         coords.x = 0;
       }
       if (to.y === 0) {
         coords.y = 0;
       }
-      this.gl.cameraTo = coords;
+      if (to.z === 0) {
+        coords.z = 0;
+      }
+      if (to.r) {
+        coords.r = this.formatCameraTo(to.r, true);
+      } else {
+        coords.r = {
+          x: 0,
+          y: 0,
+          z: 0
+        };
+      }
+      return coords;
+    },
+    setCameraTo(to) {
+      const coords = this.formatCameraTo(to);
+      this.gl.cameraTo = {
+        ...this.gl.cameraTo,
+        ...coords
+      };
     },
     clearGLAssets() {
       this.gl.meshes.forEach((mesh, index) => {
@@ -282,7 +340,7 @@ const app = {
       const data = await Promise.all([
         fetch("dev", false),
         fetch("design", true),
-        fetch("photo", true)
+        fetch("photo", true, formatIntoRows)
       ]);
       const [dev, design, photo] = data;
       this.siteData = {
@@ -313,6 +371,7 @@ export default app;
   --page-padding: 8rem 6rem 4rem 6rem;
   --padding-horizontal: 6rem;
   --padding-top: 8rem;
+  --padding-bottom: 4rem;
   --border-radius: 4px;
   --font-size-small: 1rem;
   font-family: "Bw";
@@ -323,7 +382,8 @@ export default app;
 }
 
 *:focus {
-  outline-color: var(--white);
+  /* outline-color: var(--white); */
+  outline: none;
 }
 
 ::-webkit-scrollbar {
@@ -346,7 +406,7 @@ h1 {
   -webkit-text-stroke: 1px var(--white);
   text-transform: uppercase;
   display: block;
-  /* transition: 0.3s color ease-in-out; */
+  transition: 0.1s color linear;
 }
 
 h2 {
@@ -359,6 +419,7 @@ h2 {
   -webkit-text-stroke: 1px var(--white);
   text-transform: uppercase;
   display: block;
+  transition: 0.1s color linear;
 }
 
 h3 {
@@ -370,11 +431,17 @@ h3 {
   font-weight: normal;
   display: block;
   color: var(--white);
+  transition: 0.1s color linear;
 }
 
 p {
   font-family: "Bw";
   margin: 0;
+}
+
+a {
+  color: var(--white);
+  text-decoration: none;
 }
 
 hr {
@@ -426,8 +493,12 @@ img {
   color: var(--light-grey) !important;
 }
 
-.fillHover:hover {
+.fill-hover:hover {
   color: var(--white);
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 
 .fade-enter-active {
