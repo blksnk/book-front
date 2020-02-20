@@ -19,7 +19,12 @@ const gl = {
         cameraTo: {
           x: 0,
           y: 0,
-          z: 4
+          z: 4,
+          r: {
+            x: 0,
+            y: 0,
+            z: 0
+          }
         },
         materials: {
           wireframeMaterial: new THREE.MeshBasicMaterial({
@@ -80,9 +85,9 @@ const gl = {
     };
   },
   methods: {
-    init: function() {
+    init() {
       this.container = document.getElementById("gl-mount");
-      const horizontalFov = 110;
+      const horizontalFov = 90;
       const aspect = window.innerWidth / window.innerHeight;
       const fov =
         (Math.atan(Math.tan(((horizontalFov / 2) * Math.PI) / 180) / aspect) *
@@ -93,15 +98,16 @@ const gl = {
         fov,
         window.innerWidth / window.innerHeight,
         0.05,
-        20
+        40
       );
       this.camera.position.z = 4;
+      this.camera.position.x = 14;
       this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       this.renderer.setClearColor(0x000000, 0);
       this.sizeRenderer();
       this.container.appendChild(this.renderer.domElement);
     },
-    sizeRenderer: function() {
+    sizeRenderer() {
       const width = window.innerWidth;
       const height = window.innerHeight;
       this.renderer.setSize(width, height);
@@ -109,7 +115,7 @@ const gl = {
       this.camera.updateProjectionMatrix();
       this.renderer.setPixelRatio(window.devicePixelRatio);
     },
-    animate: function() {
+    animate() {
       this.frameId = requestAnimationFrame(this.animate);
       this.rotateMeshes();
 
@@ -117,13 +123,12 @@ const gl = {
       this.redirectWhenAnimationDone();
       this.renderer.render(this.gl.scene, this.camera);
     },
-    rotateMeshes: function() {
+    rotateMeshes() {
       this.gl.meshes.forEach(mesh => {
-        // mesh.rotation.x += 0.01;
         mesh.rotation.y -= 0.01;
       });
     },
-    moveCameraAxis: function({ x, y, z }) {
+    moveCameraAxis({ x, y, z, r }) {
       const changeX = x - this.camera.position.x;
       const changeY = y - this.camera.position.y;
       const changeZ = z - this.camera.position.z;
@@ -139,8 +144,28 @@ const gl = {
       if (changeY === 0.05) {
         this.camera.position.z = z;
       }
+      if (r) {
+        this.rotateCamera(r);
+      }
     },
-    redirectWhenAnimationDone: function() {
+    rotateCamera({ x, y, z }) {
+      const changeX = x - this.camera.rotation.x;
+      const changeY = y - this.camera.rotation.y;
+      const changeZ = z - this.camera.rotation.z;
+      this.camera.rotation.x += changeX / 25;
+      this.camera.rotation.y += changeY / 25;
+      this.camera.rotation.z += changeZ / 25;
+      if (changeX === 0.05) {
+        this.camera.rotation.x = x;
+      }
+      if (changeY === 0.05) {
+        this.camera.rotation.y = y;
+      }
+      if (changeY === 0.05) {
+        this.camera.rotation.z = z;
+      }
+    },
+    redirectWhenAnimationDone() {
       const { selectionMade, redirectDone, redirectToUrl } = this.workSelect;
       if (
         selectionMade &&
@@ -154,7 +179,7 @@ const gl = {
         this.$router.push(redirectToUrl);
       }
     },
-    stop: function() {
+    stop() {
       cancelAnimationFrame(this.frameId);
       this.frameId = null;
       window.removeEventListener("resize", this.sizeRenderer);
