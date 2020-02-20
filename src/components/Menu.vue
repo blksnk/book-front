@@ -2,15 +2,22 @@
   <fragment>
     <nav id="top-nav">
       <a
-        v-for="link in links"
         :class="{
-          active: $route.path.includes(link.to),
+          active: $route.path.includes('/') && $route.path !== '/about',
           'hover-underline': true
         }"
-        v-on:click="e => transitionOut(e, link.to, false)"
-        :to="link.to"
-        v-bind:key="'link-' + link.to"
-        >{{ link.title }}</a
+        v-on:click="e => transitionOut(e, '/', false)"
+        to="/"
+        >work</a
+      >
+      <a
+        :class="{
+          active: $route.path.includes('/about'),
+          'hover-underline': true
+        }"
+        v-on:click="e => transitionOut(e, '/about', false)"
+        to="/about"
+        >about</a
       >
     </nav>
   </fragment>
@@ -37,6 +44,9 @@ export default {
     },
     activeMesh: {
       type: Object
+    },
+    disableWorkSelect: {
+      type: Function
     }
   },
   data() {
@@ -81,6 +91,7 @@ export default {
     transitionOut: function(e, url, setWork, index) {
       e.preventDefault();
       if (!this.transitionInProgress && !this.isActive(url)) {
+        this.disableWorkSelect();
         if (index) {
           this.setActiveIndex(index);
         }
@@ -123,7 +134,7 @@ nav {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  z-index: 0;
+  z-index: 30;
   mix-blend-mode: difference;
 }
 
