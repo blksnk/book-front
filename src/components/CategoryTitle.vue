@@ -1,6 +1,10 @@
 <template>
   <h1
-    :class="`${active ? 'active' : ''} ${hide ? 'hide' : ''} category-title`"
+    :class="{
+      'category-title': true,
+      hide,
+      active
+    }"
     v-on:mouseover="onHover"
     v-on:click="onClick"
   >
