@@ -18,9 +18,6 @@ export default {
       type: Boolean,
       default: false
     },
-    onPreloadingComplete: {
-      type: Function
-    },
     tweenDuration: {
       type: Number,
       default: 0.7
@@ -67,7 +64,9 @@ export default {
         opacity: 0,
         duration: this.tweenDuration,
         ease: Power2.easeIn,
-        onComplete: this.onPreloadingComplete
+        onComplete: () => {
+          this.$emit("loaded");
+        }
       });
     }
   },

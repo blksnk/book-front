@@ -48,9 +48,9 @@
     <Loader
       v-if="!loaded"
       v-bind="{
-        preloaded,
-        onPreloadingComplete
+        preloaded
       }"
+      v-on:loaded="onPreloadingComplete"
     />
   </main>
 </template>
@@ -62,7 +62,7 @@ import "@/scss/fonts.scss";
 import VueRouter from "vue-router";
 import * as THREE from "three";
 
-import { fetch, formatIntoRows } from "@/helpers/fetchers.js";
+import { fetch, formatIntoRows, extractAboutData } from "@/helpers/fetchers.js";
 import { degToRad } from "@/helpers/math.js";
 
 import GL from "@/components/GL.vue";
@@ -125,7 +125,15 @@ const app = {
         photo: [],
         design: [],
         dev: [],
-        exp: []
+        exp: [],
+        about: {
+          presentation: "",
+          education: "",
+          experience: "",
+          skills: "",
+          inspiration: "",
+          thumbnail: null
+        }
       },
       tweenDuration: 0.7,
       loaded: false,
@@ -357,13 +365,15 @@ const app = {
       const data = await Promise.all([
         fetch("dev"),
         fetch("design"),
-        fetch("photo", formatIntoRows)
+        fetch("photo", formatIntoRows),
+        fetch("about", extractAboutData)
       ]);
-      const [dev, design, photo] = data;
+      const [dev, design, photo, about] = data;
       this.siteData = {
         dev,
         design,
-        photo
+        photo,
+        about
       };
       this.preloaded = true;
     },

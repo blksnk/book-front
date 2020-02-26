@@ -7,7 +7,7 @@
         v-on:loaded="catchThumbnailLoaded"
         data-scroll
         data-scroll-speed="0.2"
-        :noAnimation="true"
+        noAnimation
         :src="project.thumbnail.url"
       />
 
@@ -241,7 +241,7 @@ export default {
       });
     },
     transitionChange(duration, opacity, callback) {
-      gsap.to(this.$refs.thumbnail, {
+      gsap.to(this.$refs.thumbnail.$el, {
         duration,
         opacity
       });
@@ -297,6 +297,21 @@ export default {
     catchThumbnailLoaded() {
       console.log("event");
       this.thumbnailLoaded = true;
+    },
+    onMount() {
+      this.$nextTick(() => {
+        this.initLocomotive();
+
+        this.transitionIn(() =>
+          this.$nextTick(() => {
+            if (this.scroll) {
+              this.scroll.update();
+            } else {
+              this.initLocomotive();
+            }
+          })
+        );
+      });
     }
   },
   watch: {
@@ -305,11 +320,12 @@ export default {
       this.projectTransition = true;
     },
     thumbnailLoaded(next) {
-      console.log(next);
-      if (next && this.scroll) {
+      if (next && this.scroll && this.projectTransition) {
         this.$nextTick(() => {
           this.scrollToTop(this.projectTransition);
         });
+      } else if (next && !this.projectTransition) {
+        this.onMount();
       }
     },
     index: function(next) {
@@ -334,11 +350,6 @@ export default {
       y: this.glOffset.y + this.index * 1.5,
       z: this.glOffset.z + this.index * 0.5
     });
-    this.transitionIn(() =>
-      this.$nextTick(function() {
-        this.initLocomotive();
-      })
-    );
   },
   beforeDestroy() {
     this.scroll.destroy();

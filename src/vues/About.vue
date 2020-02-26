@@ -4,85 +4,37 @@
       <h1 ref="title">well hello</h1>
       <text-element
         title="About me"
-        :paragraphs="
-          `Hi, I'm Jean-Nicolas Veigel, a design enthousiast.
-            
-          I currently work as a freelance web developer, but I am also very interested in various forms of art and design.
-
-          I like to experiment with new and exciting concepts and ideas, through different media, be it photography, development, graphic design or music.
-
-          You'll find all revelant information about my journey below, and some of the projects I've created in the work section of this website
-
-          Feel free to drop me a line.
-          `
-        "
+        :paragraphs="siteData.about.presentation"
       />
     </div>
-    <img
+    <image-loader
       id="about-img"
       ref="img"
-      src="@/assets/images/dark.jpg"
+      :src="siteData.about.thumbnail.url"
       data-scroll
       data-scroll-direction="horizontal"
+      noAnimation
       data-scroll-speed="-2"
+      v-on:loaded="transitionIn"
     />
     <div class="about-info-top about-info about-info-left">
-      <text-element
-        title="Education"
-        :paragraphs="
-          `2018&mdash; Web Development Bootcamp, IronHack, Paris
-
-        2017&mdash; DUT Techniques de Commercialisation, First year, IUT Robert Schuman, Strasbourg
-
-        2016&mdash; Baccalauréat ES, Mention Bien, Gymnase Jean Sturm, Strasbourg`
-        "
-      />
+      <text-element title="Education" :paragraphs="siteData.about.education" />
     </div>
 
     <div class="about-info-top about-info about-info-right">
       <text-element
         title="Experience"
-        :paragraphs="
-          `
-          2019&mdash; Freelance work as web developer
-
-          2019&mdash; Wolfox, Service, Paris
-
-          2018&mdash; CIC Bank, Summer job, Strasbourg Schiltigheim          
-
-          2017&mdash; CIC Bank, Internship, Strasbourg Schiltigheim
-
-          2013&mdash; TERTIA Solutions, Internship, Strasbourg Entzheim
-          `
-        "
+        :paragraphs="siteData.about.experience"
       />
     </div>
     <div class="about-info-btm about-info about-info-left">
-      <text-element
-        title="Skills"
-        :paragraphs="
-          `I am proficient in most of the Adobe Creative Cloud Suite &mdash; Photoshop, Illustrator, Lightroom, Premiere Pro, XD and After Effects.
-
-          When working on websites, I use several languages (Javascript, HMTL and CSS), frameworks (React, Angular, Vue, Redux), back-end services (Google Firebase and Developer Console, Amazon Web Services, Cloudinary) and databases (MongoDB, NoSQL, PostgreSQL).
-          `
-        "
-      />
+      <text-element title="Skills" :paragraphs="siteData.about.skills" />
     </div>
 
     <div class="about-info-btm about-info about-info-right">
       <text-element
         title="Inspiration"
-        :paragraphs="
-          `
-            My work is influenced by various trends and artists. I like to present data in a minimal way, using mainly typography.
-
-            The recent resurgence of the brutalist movement has also had a great effect on me. The Japanese culture is also fascinating to me.
-
-            Here are some of the artists that have helped shape my vision, in no particular order:
-
-            Felipe Pantone &mdash; Ghostemain &mdash; Graeme Swinton &mdash; $uicideBoy$ &mdash; Eliott Grunewald &mdash; Julien Gachadoat &mdash; polygon1993 &mdash; Pierre Châtel
-          `
-        "
+        :paragraphs="siteData.about.inspiration"
       />
     </div>
 
@@ -125,10 +77,12 @@ import { initLS, wHeight } from "../helpers/layout.js";
 import { throttle } from "@/helpers/math.js";
 import gsap, { Power2 } from "gsap";
 import TextElement from "../components/TextElement.vue";
+import ImageLoader from "@/components/ImageLoader.vue";
 export default {
   name: "About",
   components: {
-    "text-element": TextElement
+    "text-element": TextElement,
+    "image-loader": ImageLoader
   },
   props: {
     setCameraTo: {
@@ -145,6 +99,9 @@ export default {
     },
     tweenDuration: {
       default: 0.7
+    },
+    siteData: {
+      type: Object
     }
   },
   data() {
@@ -177,10 +134,9 @@ export default {
         this.$refs.page,
         throttle(this.checkScroll, 50, {
           leading: true,
-          trailing: true
+          trailing: false
         })
       );
-      // this.scroll = initLS(this.$refs.page, this.checkScroll);
     },
     checkScroll(e) {
       const { y } = e.scroll;
@@ -199,8 +155,9 @@ export default {
     },
     transitionIn() {
       const text = this.$refs.page.querySelectorAll("div.text-element");
+      this.setupGL();
       gsap.fromTo(
-        this.$refs.img,
+        this.$refs.img.$el,
         {
           y: "-100vh"
         },
@@ -235,10 +192,6 @@ export default {
         }
       );
     }
-  },
-  mounted() {
-    this.setupGL();
-    this.$nextTick(this.transitionIn);
   },
   beforeDestroy() {
     if (this.scroll) {

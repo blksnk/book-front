@@ -32,6 +32,9 @@ function getCatUrl(cat) {
     case "exp": {
       return "/experiments";
     }
+    case "about": {
+      return "/abouts";
+    }
   }
 }
 
@@ -41,6 +44,10 @@ export function formatIntoRows(data) {
     return result;
   }, []);
   return rows;
+}
+
+export function extractAboutData(data) {
+  return data[0];
 }
 
 export function loadImg(src, el, callback) {

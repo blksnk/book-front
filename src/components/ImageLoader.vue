@@ -19,7 +19,9 @@ export default {
           fadeIn(this.$refs.img, this.tweenDuration, "out");
         });
       }
-      this.$emit("loaded");
+      this.$nextTick(() => {
+        this.$emit("loaded");
+      });
     },
     onClick() {
       if (this.click) {
