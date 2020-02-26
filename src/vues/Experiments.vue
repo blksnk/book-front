@@ -165,7 +165,8 @@ export default {
 }
 
 #exp-left h2 {
-  overflow-wrap: break-word;
+  overflow-wrap: normal;
+  z-index: 25;
 }
 
 #exp-right {
