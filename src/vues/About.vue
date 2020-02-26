@@ -64,7 +64,7 @@
       <a
         target="_blank"
         rel="noopener noreferrer"
-        href="https://linkedin.com/in/jnveigel"
+        href="https://linkedin.com/in/jn-veigel"
       >
         <h2 class="fill-hover">linkedin /jnveigel</h2>
       </a>
