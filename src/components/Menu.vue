@@ -5,7 +5,7 @@
       <span id="top-nav-right">
         <a
           :class="{
-            active: $route.path.includes('/') && $route.path !== '/about',
+            active: activeLink === '/',
             'hover-underline': true
           }"
           v-on:click="e => transitionOut(e, '/', false)"
@@ -14,7 +14,7 @@
         >
         <a
           :class="{
-            active: $route.path.includes('/about'),
+            active: activeLink == '/about',
             'hover-underline': true
           }"
           v-on:click="e => transitionOut(e, '/about', false)"
@@ -55,6 +55,7 @@ export default {
   data() {
     return {
       transitionInProgress: false,
+      activeLink: this.$route.path === "/about" ? "/about" : "/",
       isWorkSection: this.testIsWorkSection(this.$route.path),
       links: [
         {
@@ -94,6 +95,7 @@ export default {
     transitionOut: function(e, url, setWork, index) {
       e.preventDefault();
       if (!this.transitionInProgress && !this.isActive(url)) {
+        this.activeLink = url;
         this.disableWorkSelect();
         if (index) {
           this.setActiveIndex(index);
