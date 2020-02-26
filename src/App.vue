@@ -433,7 +433,7 @@ export default app;
 
 html,
 body {
-  background-color: var(--black);
+  background-color: var(--white);
   overflow: hidden;
 }
 
