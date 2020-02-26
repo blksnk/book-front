@@ -6,7 +6,7 @@
         v-bind:key="index"
         v-bind:title="item.title"
         v-bind:onHover="() => onHover(index)"
-        v-bind:onClick="() => onClick('/work' + item.url)"
+        v-bind:onClick="() => selectCategory('/work' + item.url)"
         v-bind:id="`title${index}`"
         v-bind:active="workSelect.activeIndex === index"
         v-bind:hide="workSelect.selectionMade"
@@ -75,9 +75,6 @@ export default {
     };
   },
   methods: {
-    onClick: function(url) {
-      this.selectCategory(url);
-    },
     onHover: function(index) {
       this.setActiveIndex(index);
     },

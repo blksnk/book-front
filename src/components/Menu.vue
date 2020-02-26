@@ -1,24 +1,27 @@
 <template>
   <fragment>
     <nav id="top-nav">
-      <a
-        :class="{
-          active: $route.path.includes('/') && $route.path !== '/about',
-          'hover-underline': true
-        }"
-        v-on:click="e => transitionOut(e, '/', false)"
-        to="/"
-        >work</a
-      >
-      <a
-        :class="{
-          active: $route.path.includes('/about'),
-          'hover-underline': true
-        }"
-        v-on:click="e => transitionOut(e, '/about', false)"
-        to="/about"
-        >about</a
-      >
+      <span id="top-nav-title">genmetsu.</span>
+      <span id="top-nav-right">
+        <a
+          :class="{
+            active: $route.path.includes('/') && $route.path !== '/about',
+            'hover-underline': true
+          }"
+          v-on:click="e => transitionOut(e, '/', false)"
+          to="/"
+          >.work</a
+        >
+        <a
+          :class="{
+            active: $route.path.includes('/about'),
+            'hover-underline': true
+          }"
+          v-on:click="e => transitionOut(e, '/about', false)"
+          to="/about"
+          >.about</a
+        >
+      </span>
     </nav>
   </fragment>
 </template>
@@ -142,11 +145,19 @@ nav {
   top: 4rem;
 }
 
+#top-nav-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
 #work-nav {
   bottom: 4rem;
 }
 
-a {
+a,
+#top-nav-title {
   font-weight: 600;
   color: var(--white);
   font-size: var(--font-size-small);
@@ -154,5 +165,10 @@ a {
   mix-blend-mode: difference;
   position: relative;
   cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+#top-nav-title {
+  cursor: default;
 }
 </style>

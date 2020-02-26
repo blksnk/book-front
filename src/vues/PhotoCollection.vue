@@ -16,9 +16,9 @@
           </h3>
         </div>
 
-        <img
-          data-scroll
-          data-scroll-speed="2"
+        <image-loader
+          scroll
+          scrollSpeed="2"
           id="photo-collec-pres-right"
           :src="collection.thumbnail.url"
         />
@@ -38,7 +38,7 @@
               :key="index"
               :class="`slide--${index}`"
             >
-              <img :src="slide.url" />
+              <image-loader :src="slide.url" />
             </div>
           </agile>
           <div id="carousel-controls">
@@ -55,7 +55,7 @@
                 :class="`slide--${index}`"
                 @click="$refs.thumbnailCarousel.goTo(index)"
               >
-                <img :src="slide.url" />
+                <image-loader :src="slide.url" />
               </div>
             </agile>
             <div id="carousel-btns">
@@ -103,14 +103,16 @@
 <script>
 import TextElement from "../components/TextElement.vue";
 import { VueAgile } from "vue-agile";
-import { wHeight, getCurrentScrollY, initLS } from "../helpers/layout.js";
+import { wHeight, getCurrentScrollY, initLS } from "@/helpers/layout.js";
+import ImageLoader from "@/components/ImageLoader.vue";
 import gsap, { Power2 } from "gsap";
 
 export default {
   name: "PhotoCollection",
   components: {
     agile: VueAgile,
-    "text-element": TextElement
+    "text-element": TextElement,
+    "image-loader": ImageLoader
   },
   props: {
     collection: {
@@ -141,17 +143,21 @@ export default {
         dots: false,
         navButtons: false,
         fade: true,
-        timing: "ease-in-out"
+        timing: "ease-in-out",
+        pauseOnHover: true,
+        pauseOnDotsHover: true
       },
       options2: {
         autoplay: true,
         timing: "ease-in-out",
-        autoplaySpeed: 5000,
+        autoplaySpeed: 7000,
         centerMode: true,
         infinite: true,
         dots: false,
         navButtons: false,
         slidesToShow: 3,
+        pauseOnHover: true,
+        pauseOnDotsHover: true,
         responsive: [
           {
             breakpoint: 600,
@@ -336,6 +342,11 @@ export default {
   height: 100%;
 }
 
+.agile__slide-active {
+  border: none;
+  outline: none;
+}
+
 #main-carousel {
   height: calc(100vh - var(--padding-top));
 }
@@ -346,6 +357,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  filter: grayscale(1);
 }
 
 #thumbnail-carousel {

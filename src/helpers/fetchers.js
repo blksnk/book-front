@@ -1,47 +1,16 @@
 import axios from "axios";
-const api = process.env.VUE_APP_API_URL;
 
-export async function fetch(cat, formatDefault, formatFunction) {
-  let url;
-  switch (cat) {
-    case "dev":
-      url = "/dev-works";
-      break;
-    case "design":
-      url = "/design-works";
-      break;
-    case "photo": {
-      url = "/photo-collections";
-      break;
-    }
-    case "exp": {
-      url = "/experiments";
-      break;
-    }
-  }
+export async function fetch(cat, formatFunction) {
+  const url = getCatUrl(cat);
   return new Promise((resolve, reject) => {
     axios
-      .get(api + url)
+      .get(process.env.VUE_APP_API_URL + url)
       .then(res => {
-        if (!formatDefault) {
-          return resolve(res.data);
-        }
-        if (
-          formatFunction &&
-          formatFunction instanceof Function &&
-          !formatDefault
-        ) {
+        if (formatFunction) {
+          console.log("formatFunction");
           return resolve(formatFunction(res.data));
-        }
-        if (
-          formatDefault &&
-          formatFunction &&
-          formatFunction instanceof Function
-        ) {
-          return resolve(formatFunction(defaultFormatter(res.data)));
-        }
-        if (formatDefault && !formatFunction) {
-          return resolve(defaultFormatter(res.data));
+        } else {
+          return resolve(res.data);
         }
       })
       .catch(e => {
@@ -51,37 +20,19 @@ export async function fetch(cat, formatDefault, formatFunction) {
   });
 }
 
-export function defaultFormatter(data) {
-  const formatted = data.map(item => {
-    let n = item;
-    if (item.thumbnail) {
-      n.thumbnail = formatMediaUrl(item.thumbnail);
+function getCatUrl(cat) {
+  switch (cat) {
+    case "dev":
+      return "/dev-works";
+    case "design":
+      return "/design-works";
+    case "photo": {
+      return "/photo-collections";
     }
-    if (item.photos) {
-      n.photos = item.photos.map(photo => formatMediaUrl(photo));
+    case "exp": {
+      return "/experiments";
     }
-    if (item.images) {
-      n.images = item.images.map(image => formatMediaUrl(image));
-    }
-    if (item.image1) {
-      n.image1 = formatMediaUrl(item.image1);
-    }
-    if (item.image2) {
-      n.image2 = formatMediaUrl(item.image2);
-    }
-    if (item.image3) {
-      n.image3 = formatMediaUrl(item.image3);
-    }
-    return n;
-  });
-  return formatted;
-}
-
-export function formatMediaUrl(media) {
-  return {
-    ...media,
-    url: api + media.url
-  };
+  }
 }
 
 export function formatIntoRows(data) {
@@ -90,4 +41,37 @@ export function formatIntoRows(data) {
     return result;
   }, []);
   return rows;
+}
+
+export function loadImg(src, el, callback) {
+  const img = document.createElement("img");
+  const onload = () => {
+    el.src = img.src;
+    if (callback) {
+      callback();
+    }
+  };
+  const fallback = () => {
+    img.onload = onload;
+    img.src = src;
+  };
+  if (img.decode) {
+    img.src = src;
+    img
+      .decode()
+      .then(onload)
+      .catch(fallback);
+  } else {
+    fallback();
+  }
+}
+
+export async function fetchAll() {
+  const data = await Promise.all([
+    fetch("dev", false),
+    fetch("design", false),
+    fetch("photo", false)
+  ]);
+  const [dev, design, photo] = data;
+  return { dev, design, photo };
 }

@@ -6,11 +6,12 @@
       v-if="!selectionMade"
     >
       <div id="design-project-thumbnail-scroller" ref="scroller">
-        <img
+        <image-loader
           class="design-project-thumbail"
           v-for="(project, index) in siteData.design"
           :src="project.thumbnail.url"
           :alt="titles[index].title"
+          v-on:loaded="catchLoaded"
           v-bind:key="'design-project-thumbail-' + index"
         />
       </div>
@@ -56,11 +57,13 @@
 <script>
 import gsap, { Power2 } from "gsap";
 import { rem } from "../helpers/layout.js";
+import ImageLoader from "@/components/ImageLoader.vue";
 import DesignProject from "./DesignProject.vue";
 export default {
   name: "design",
   components: {
-    DesignProject
+    DesignProject,
+    "image-loader": ImageLoader
   },
   props: {
     setCameraTo: {
@@ -103,7 +106,8 @@ export default {
       rem: rem(),
       scrollY: 0,
       lockInput: true,
-      cHeight: 0
+      cHeight: 0,
+      loadedCount: 0
     };
   },
   computed: {
@@ -112,6 +116,9 @@ export default {
     },
     selectedProject() {
       return this.siteData.design[this.selectedIndex];
+    },
+    projectCount() {
+      return this.siteData.design.length;
     }
   },
   methods: {
@@ -249,6 +256,15 @@ export default {
         this.transitionSelect();
       }
     },
+    catchLoaded() {
+      this.loadedCount++;
+      if (this.loadedCount === this.projectCount) {
+        this.setupGL();
+        this.$nextTick(() => {
+          this.transitionIn();
+        });
+      }
+    },
     scrollToImg(index, duration) {
       if (!duration) {
         gsap.set(this.$refs.scroller, {
@@ -291,13 +307,6 @@ export default {
       .getComputedStyle(this.$refs.container)
       .getPropertyValue("height")
       .split("px")[0];
-
-    setTimeout(() => {
-      this.$nextTick(() => {
-        this.setupGL();
-        this.transitionIn();
-      });
-    }, 300);
   }
 };
 </script>

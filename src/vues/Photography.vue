@@ -7,19 +7,15 @@
         v-bind:key="'photo-row-' + rowIndex"
         data-scroll-section
       >
-        <img
-          v-on:click="() => selectCollection(rowIndex, 0)"
+        <image-loader
+          v-for="(image, index) in row"
+          :key="`row-image-${rowIndex}-${index}`"
+          :rowIndex="rowIndex"
+          :imageIndex="index"
+          :src="image.thumbnail.url"
+          v-on:loaded="() => catchLoad(selectionMade ? onPageResume : onLoaded)"
+          :click="() => selectCollection(rowIndex, index)"
           class="photo-item"
-          decoding="async"
-          :src="row[0].thumbnail.url"
-          data-scroll
-          data-scroll-speed="0"
-        />
-        <img
-          v-if="row[1]"
-          v-on:click="() => selectCollection(rowIndex, 1)"
-          class="photo-item"
-          :src="row[1].thumbnail.url"
           data-scroll
           data-scroll-speed="0"
         />
@@ -39,12 +35,14 @@
 
 <script>
 import PhotoCollection from "./PhotoCollection.vue";
-import { wHeight, initLS } from "../helpers/layout.js";
+import ImageLoader from "@/components/ImageLoader.vue";
+import { wHeight, initLS } from "@/helpers/layout.js";
 import gsap, { Power2 } from "gsap";
 export default {
   name: "Photography",
   components: {
-    "photo-collection": PhotoCollection
+    "photo-collection": PhotoCollection,
+    "image-loader": ImageLoader
   },
   props: {
     siteData: {
@@ -73,11 +71,21 @@ export default {
   },
   data() {
     return {
-      rows: [],
       scroll: null,
       selectionMade: false,
-      selectedCollection: null
+      selectedCollection: null,
+      loadedCount: 0
     };
+  },
+  computed: {
+    imageCount: function() {
+      let count = 0;
+      const { length } = this.siteData.photo;
+      for (let i = 0; i < length; i++) {
+        count += this.siteData.photo[i].length;
+      }
+      return count;
+    }
   },
   methods: {
     setupGL() {
@@ -94,7 +102,6 @@ export default {
     },
     selectCollection(rowIndex, collectionIndex) {
       this.selectedCollection = this.siteData.photo[rowIndex][collectionIndex];
-      this.scroll.destroy();
       this.transitionSelect();
     },
     transitionSelect() {
@@ -108,8 +115,13 @@ export default {
       });
     },
     closeCollection() {
+      this.loadedCount = 0;
       this.selectionMade = false;
-      this.$nextTick(() => this.transitionIn(() => this.scroll.init()));
+
+      // this.$nextTick(() => this.transitionIn(() => this.scroll.init()));
+    },
+    onPageResume() {
+      this.$nextTick(this.transitionIn(this.scrollInit));
     },
     transitionIn(callback) {
       gsap.fromTo(
@@ -124,22 +136,27 @@ export default {
           onComplete: callback || null
         }
       );
-    }
-  },
-  mounted() {
-    setTimeout(() => {
+    },
+    onLoaded() {
+      this.setupGL();
       this.$nextTick(() => {
-        this.setupGL();
         this.transitionIn(this.initLocomotive);
       });
-    }, 200);
+    },
+    catchLoad(callback) {
+      if (this.loadedCount < this.imageCount) {
+        this.loadedCount++;
+
+        if (this.loadedCount === this.imageCount) {
+          callback();
+        }
+      }
+    }
   },
+  mounted() {},
   beforeDestroy() {
-    this.scroll.destroy();
-  },
-  watch: {
-    siteData: function() {
-      this.createRows();
+    if (this.scroll) {
+      this.scroll.destroy();
     }
   }
 };
@@ -155,6 +172,7 @@ export default {
   width: 100%;
   padding: var(--page-padding);
   display: grid;
+  min-height: 100vh;
   grid-template-columns: 1fr;
   grid-gap: 2rem;
   transform: translateY(-300vh);

@@ -12,6 +12,7 @@
     />
     <transition name="pagefade">
       <router-view
+        v-if="loaded"
         v-bind="{
           siteData,
           setCameraTo,
@@ -43,33 +44,44 @@
         disableWorkSelect
       }"
     />
+
+    <Loader
+      v-if="!loaded"
+      v-bind="{
+        preloaded,
+        onPreloadingComplete
+      }"
+    />
   </main>
 </template>
 
 <script>
 import "normalize.css";
-import "./scss/fonts.scss";
+import "@/scss/fonts.scss";
 
 import VueRouter from "vue-router";
 import * as THREE from "three";
 
-import { fetch, formatIntoRows } from "./helpers/fetchers.js";
-import { degToRad } from "./helpers/math.js";
+import { fetch, formatIntoRows } from "@/helpers/fetchers.js";
+import { degToRad } from "@/helpers/math.js";
 
-import GL from "./components/GL.vue";
-import Menu from "./components/Menu.vue";
+import GL from "@/components/GL.vue";
+import Loader from "@/components/Loader.vue";
+import Menu from "@/components/Menu.vue";
 
-import Development from "./vues/Development.vue";
-import Design from "./vues/Design.vue";
-import Photography from "./vues/Photography.vue";
-import CategoryWrapper from "./components/CategoryWrapper.vue";
-import About from "./vues/About.vue";
+import Development from "@/vues/Development.vue";
+import Design from "@/vues/Design.vue";
+import Photography from "@/vues/Photography.vue";
+import CategoryWrapper from "@/components/CategoryWrapper.vue";
+import About from "@/vues/About.vue";
+import Music from "@/vues/Music.vue";
 
 const app = {
   name: "app",
   components: {
     GL,
-    Menu
+    Menu,
+    Loader
   },
   router: new VueRouter({
     mode: "history",
@@ -90,6 +102,10 @@ const app = {
       {
         path: "/work/photo/",
         component: Photography
+      },
+      {
+        path: "/work/music",
+        component: Music
       },
       {
         path: "/about",
@@ -113,11 +129,12 @@ const app = {
       },
       tweenDuration: 0.7,
       loaded: false,
+      preloaded: false,
       gl: {
         cameraTo: {
-          x: 0,
+          x: 14,
           y: 0,
-          z: 6,
+          z: 10,
           r: {
             x: 0,
             y: 0,
@@ -338,9 +355,9 @@ const app = {
     },
     async fetchSiteData() {
       const data = await Promise.all([
-        fetch("dev", false),
-        fetch("design", true),
-        fetch("photo", true, formatIntoRows)
+        fetch("dev"),
+        fetch("design"),
+        fetch("photo", formatIntoRows)
       ]);
       const [dev, design, photo] = data;
       this.siteData = {
@@ -348,7 +365,14 @@ const app = {
         design,
         photo
       };
+      this.preloaded = true;
+    },
+    onPreloadingComplete() {
       this.loaded = true;
+      this.setCameraTo({
+        x: 0,
+        z: 6
+      });
     }
   },
   created() {

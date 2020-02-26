@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { formatParagraphs } from "../helpers/layout.js";
+import { formatParagraphs, replaceEmDash } from "../helpers/layout.js";
 
 export default {
   name: "text-element",
@@ -40,7 +40,7 @@ export default {
   },
   computed: {
     formattedParagraphs() {
-      return formatParagraphs(this.paragraphs);
+      return formatParagraphs(replaceEmDash(this.paragraphs));
     }
   }
 };

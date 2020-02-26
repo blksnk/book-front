@@ -3,10 +3,14 @@ import locomotiveScroll from "locomotive-scroll";
 export const wHeight = () => window.innerHeight;
 export const wWidth = () => window.innerWidth;
 export const rem = () =>
-  window.getComputedStyle(document.documentElement).fontSize.split("px")[0];
+  parseInt(
+    window.getComputedStyle(document.documentElement).fontSize.split("px")[0]
+  );
 
 export const formatParagraphs = paragraph =>
   paragraph.split("\n").filter(item => item !== "");
+
+export const replaceEmDash = string => string.split("&mdash;").join("\u2014");
 
 export const getCurrentScrollY = el => {
   const { y, top } = el.getBoundingClientRect();
@@ -15,10 +19,10 @@ export const getCurrentScrollY = el => {
 
 export const initLS = (el, listener) => {
   const ls = new locomotiveScroll({
-    el: el,
+    el,
     smooth: true,
     smoothMobile: true,
-    inertia: 0.8,
+    inertia: 0.7,
     getSpeed: true
   });
   if (listener) {

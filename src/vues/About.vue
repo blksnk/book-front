@@ -5,11 +5,15 @@
       <text-element
         title="About me"
         :paragraphs="
-          `Commodo aliqua id ullamco incididunt sint exercitation qui ut id nulla id reprehenderit adipisicing amet eu incididunt amet labore.
+          `Hi, I'm Jean-Nicolas Veigel, a design enthousiast.
+            
+          I currently work as a freelance web developer, but I am also very interested in various forms of art and design.
 
-          Anim aliquip elit elit aliquip in officia sit et excepteur consectetur velit laboris est est enim magna sit sunt ex ex magna ut pariatur reprehenderit do excepteur et duis et dolore occaecat velit excepteur pariatur incididunt ullamco do.
+          I like to experiment with new and exciting concepts and ideas, through different media, be it photography, development, graphic design or music.
 
-          Lorem ipsum reprehenderit sed enim aute voluptate in amet fugiat labore deserunt cupidatat dolor sunt.
+          You'll find all revelant information about my journey below, and some of the projects I've created in the work section of this website
+
+          Feel free to drop me a line.
           `
         "
       />
@@ -25,29 +29,93 @@
     <div class="about-info-top about-info about-info-left">
       <text-element
         title="Education"
-        paragraphs="Adipisicing in aliquip fugiat voluptate quis dolor reprehenderit et dolore aute est ad nulla id voluptate minim sint quis."
+        :paragraphs="
+          `2018&mdash; Web Development Bootcamp, IronHack, Paris
+
+        2017&mdash; DUT Techniques de Commercialisation, First year, IUT Robert Schuman, Strasbourg
+
+        2016&mdash; Baccalauréat ES, Mention Bien, Gymnase Jean Sturm, Strasbourg`
+        "
       />
     </div>
 
     <div class="about-info-top about-info about-info-right">
-      <text-element title="Experience" />
+      <text-element
+        title="Experience"
+        :paragraphs="
+          `
+          2019&mdash; Freelance work as web developer
+
+          2019&mdash; Wolfox, Service, Paris
+
+          2018&mdash; CIC Bank, Summer job, Strasbourg Schiltigheim          
+
+          2017&mdash; CIC Bank, Internship, Strasbourg Schiltigheim
+
+          2013&mdash; TERTIA Solutions, Internship, Strasbourg Entzheim
+          `
+        "
+      />
     </div>
     <div class="about-info-btm about-info about-info-left">
-      <text-element title="Skills" />
+      <text-element
+        title="Skills"
+        :paragraphs="
+          `I am proficient in most of the Adobe Creative Cloud Suite &mdash; Photoshop, Illustrator, Lightroom, Premiere Pro, XD and After Effects.
+
+          When working on websites, I use several languages (Javascript, HMTL and CSS), frameworks (React, Angular, Vue, Redux), back-end services (Google Firebase and Developer Console, Amazon Web Services, Cloudinary) and databases (MongoDB, NoSQL, PostgreSQL).
+          `
+        "
+      />
     </div>
 
     <div class="about-info-btm about-info about-info-right">
-      <text-element title="Inspiration" />
+      <text-element
+        title="Inspiration"
+        :paragraphs="
+          `
+            My work is influenced by various trends and artists. I like to present data in a minimal way, using mainly typography.
+
+            The recent resurgence of the brutalist movement has also had a great effect on me. The Japanese culture is also fascinating to me.
+
+            Here are some of the artists that have helped shape my vision, in no particular order:
+
+            Felipe Pantone &mdash; Ghostemain &mdash; Graeme Swinton &mdash; $uicideBoy$ &mdash; Eliott Grunewald &mdash; Julien Gachadoat &mdash; polygon1993 &mdash; Pierre Châtel
+          `
+        "
+      />
     </div>
 
     <div id="about-contact">
       <h3>contact information</h3>
       <hr />
-      <h2>hello@veigel.dev</h2>
-      <h2>+33 6 58 23 87 58</h2>
-      <h2>insta /chxmpetre</h2>
-      <h2>github /blksnk</h2>
-      <h2>linkedin /jnveigel</h2>
+      <a href="mailto:hello@veigel.dev">
+        <h2 class="fill-hover">hello@veigel.dev</h2>
+      </a>
+      <a href="tel:+33658238758">
+        <h2 class="fill-hover">+33 6 58 23 87 58</h2>
+      </a>
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://instagram.com/chxmpetre"
+      >
+        <h2 class="fill-hover">insta /chxmpetre</h2>
+      </a>
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://github.com/blksnk"
+      >
+        <h2 class="fill-hover">github /blksnk</h2>
+      </a>
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://linkedin.com/in/jnveigel"
+      >
+        <h2 class="fill-hover">linkedin /jnveigel</h2>
+      </a>
     </div>
   </section>
 </template>
@@ -107,9 +175,9 @@ export default {
     initLocomotive() {
       this.scroll = initLS(
         this.$refs.page,
-        throttle(this.checkScroll, 100, {
+        throttle(this.checkScroll, 50, {
           leading: true,
-          trailing: false
+          trailing: true
         })
       );
       // this.scroll = initLS(this.$refs.page, this.checkScroll);
@@ -118,7 +186,6 @@ export default {
       const { y } = e.scroll;
       const pHeight = this.$refs.page.clientHeight - wHeight();
       const val = ((y / pHeight) * 100 * (21 - 7)) / 100 + 7;
-      console.log(val);
       this.setCameraTo({
         x: val,
         y: -10,
@@ -151,7 +218,7 @@ export default {
         },
         {
           x: 0,
-          duration: this.tweenDuration,
+          duration: this.tweenDuration * 2,
           delay: this.tweenDuration,
           ease: Power2.easeOut
         }
@@ -163,7 +230,7 @@ export default {
         },
         {
           opacity: 1,
-          duration: this.tweenDuration,
+          duration: this.tweenDuration * 2,
           delay: this.tweenDuration * 2
         }
       );
@@ -250,6 +317,6 @@ export default {
 
 #about-contact h2 {
   overflow-wrap: break-word;
-  margin-bottom: 1rem;
+  /* margin-bottom: 1rem; */
 }
 </style>

@@ -1,12 +1,13 @@
 <template>
   <fragment>
     <article id="design-project-page" ref="page">
-      <img
+      <image-loader
         ref="thumbnail"
         id="design-selected-project-thumb"
+        v-on:loaded="catchThumbnailLoaded"
         data-scroll
-        data-scroll-offset="-100%"
         data-scroll-speed="0.2"
+        :noAnimation="true"
         :src="project.thumbnail.url"
       />
 
@@ -26,14 +27,13 @@
           data-align="left"
           :paragraphs="project.paragraph1"
         />
-        <!-- <text-element title="Date" data-align="right" :paragraphs="[project.date]"/> -->
 
-        <img
+        <image-loader
           v-if="project.image1"
           :src="project.image1.url"
           data-scroll
+          :noAnimation="true"
           data-scroll-speed="2"
-          data-scroll-offset="-100%"
           alt=""
           class="design-project-img"
         />
@@ -44,13 +44,12 @@
           :paragraphs="project.paragraph2"
         />
 
-        <img
+        <image-loader
           v-if="project.image2"
           :src="project.image2.url"
           data-align="left"
           data-scroll
           data-scroll-speed="2"
-          data-scroll-offset="-100%"
           class="design-project-img"
           alt=""
         />
@@ -61,15 +60,13 @@
           :paragraphs="project.paragraph3"
         />
 
-        <img
+        <image-loader
           v-if="project.image3"
           :src="project.image3.url"
           data-align="right"
           data-scroll
           data-scroll-speed="2"
-          data-scroll-offset="-100%"
           class="design-project-img"
-          alt=""
         />
 
         <section
@@ -99,7 +96,9 @@
         <transition name="fade">
           <button
             class="hover-underline"
-            v-if="scrolled && !scrolledEnd && listLength > 1"
+            v-if="
+              !projectTransition && scrolled && !scrolledEnd && listLength > 1
+            "
             v-on:click="e => navigate('prev')"
           >
             .prev
@@ -108,7 +107,9 @@
         <transition name="fade">
           <button
             class="hover-underline"
-            v-if="scrolled && !scrolledEnd && listLength > 1"
+            v-if="
+              !projectTransition && scrolled && !scrolledEnd && listLength > 1
+            "
             v-on:click="e => navigate('next')"
           >
             .next
@@ -138,7 +139,9 @@
 <script>
 import gsap, { Power2 } from "gsap";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin.js";
-import TextElement from "../components/TextElement.vue";
+import TextElement from "@/components/TextElement.vue";
+import ImageLoader from "@/components/ImageLoader.vue";
+
 import {
   rem,
   wHeight,
@@ -151,6 +154,10 @@ gsap.registerPlugin(ScrollToPlugin);
 
 export default {
   name: "DesignProject",
+  components: {
+    "text-element": TextElement,
+    "image-loader": ImageLoader
+  },
   props: {
     project: {
       type: Object
@@ -180,16 +187,15 @@ export default {
       default: 1
     }
   },
-  components: {
-    "text-element": TextElement
-  },
   data() {
     return {
       scroll: null,
       scrolled: false,
       scrolledEnd: false,
+      projectTransition: false,
+      thumbnailLoaded: false,
       glOffset: {
-        x: -8,
+        x: 8,
         y: -4,
         z: 11
       }
@@ -203,9 +209,10 @@ export default {
       this.transitionChange(0.2, 0, () => this.navigateProject(dir));
     },
     scrollToTop(projectChange) {
-      this.scroll.scrollTo(this.$refs.thumbnail, 16);
+      this.scroll.scrollTo(this.$refs.thumbnail.$el, 16);
 
       if (projectChange) {
+        this.projectTransition = true;
         this.scroll.update();
         this.scroll.on("scroll", this.revealOnReachTop);
       }
@@ -246,11 +253,13 @@ export default {
     },
     revealOnReachTop(e) {
       if (e.speed >= 0) {
-        this.transitionChange(this.tweenDuration, 1);
+        this.transitionChange(this.tweenDuration, 1, () => {
+          this.projectTransition = false;
+        });
         this.scroll.off("scroll", this.revealOnReachTop);
       }
     },
-    transitionIn() {
+    transitionIn(onComplete) {
       gsap.to(this.$refs.page, {
         duration: this.tweenDuration,
         x: 0,
@@ -258,9 +267,10 @@ export default {
       });
       gsap.to(this.$refs.title, {
         duration: this.tweenDuration,
-        delay: 0.7,
+        delay: this.tweenDuration,
         opacity: 1,
-        ease: Power2.easeOut
+        ease: Power2.easeOut,
+        onComplete
       });
       gsap.to(this.$refs.btnContainer, {
         duration: this.tweenDuration,
@@ -283,13 +293,24 @@ export default {
     },
     checkScrolledToEnd() {
       return this.$refs.page.clientHeight - this.scrollY <= 200;
+    },
+    catchThumbnailLoaded() {
+      console.log("event");
+      this.thumbnailLoaded = true;
     }
   },
   watch: {
-    project: function() {
-      this.$nextTick(() => {
-        this.scrollToTop(true);
-      });
+    project() {
+      this.thumbnailLoaded = false;
+      this.projectTransition = true;
+    },
+    thumbnailLoaded(next) {
+      console.log(next);
+      if (next && this.scroll) {
+        this.$nextTick(() => {
+          this.scrollToTop(this.projectTransition);
+        });
+      }
     },
     index: function(next) {
       this.$nextTick(() => {
@@ -313,10 +334,11 @@ export default {
       y: this.glOffset.y + this.index * 1.5,
       z: this.glOffset.z + this.index * 0.5
     });
-    this.transitionIn();
-    this.$nextTick(function() {
-      this.initLocomotive();
-    });
+    this.transitionIn(() =>
+      this.$nextTick(function() {
+        this.initLocomotive();
+      })
+    );
   },
   beforeDestroy() {
     this.scroll.destroy();
