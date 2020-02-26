@@ -102,7 +102,7 @@ const gl = {
       );
       this.camera.position.x = 14;
       this.camera.position.y = 0;
-      this.camera.position.z = 10;
+      this.camera.position.z = 16;
       this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       this.renderer.setClearColor(0x000000, 0);
       this.sizeRenderer();

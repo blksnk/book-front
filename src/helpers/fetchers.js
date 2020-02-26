@@ -8,9 +8,9 @@ export async function fetch(cat, formatFunction) {
       .then(res => {
         if (formatFunction) {
           console.log("formatFunction");
-          return resolve(formatFunction(res.data));
+          return resolve(formatFunction(sortById(res.data)));
         } else {
-          return resolve(res.data);
+          return resolve(sortById(res.data));
         }
       })
       .catch(e => {
@@ -46,6 +46,12 @@ export function formatIntoRows(data) {
   return rows;
 }
 
+export function sortById(data) {
+  return data.sort((a, b) => {
+    return a.id - b.id;
+  });
+}
+
 export function extractAboutData(data) {
   return data[0];
 }
@@ -57,7 +63,6 @@ export function loadImg(src, el, callback) {
     if (callback) {
       callback();
     }
-    // img.parentNode.removeChild(img);
   };
   const fallback = () => {
     img.onload = onload;

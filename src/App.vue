@@ -69,12 +69,13 @@ import GL from "@/components/GL.vue";
 import Loader from "@/components/Loader.vue";
 import Menu from "@/components/Menu.vue";
 
-import Development from "@/vues/Development.vue";
-import Design from "@/vues/Design.vue";
-import Photography from "@/vues/Photography.vue";
 import CategoryWrapper from "@/components/CategoryWrapper.vue";
 import About from "@/vues/About.vue";
+import Development from "@/vues/Development.vue";
+import Design from "@/vues/Design.vue";
 import Music from "@/vues/Music.vue";
+import Photography from "@/vues/Photography.vue";
+import Experiments from "@/vues/Experiments.vue";
 
 const app = {
   name: "app",
@@ -106,6 +107,10 @@ const app = {
       {
         path: "/work/music",
         component: Music
+      },
+      {
+        path: "/work/exp",
+        component: Experiments
       },
       {
         path: "/about",
@@ -142,7 +147,7 @@ const app = {
         cameraTo: {
           x: 14,
           y: 0,
-          z: 10,
+          z: 16,
           r: {
             x: 0,
             y: 0,
@@ -366,14 +371,16 @@ const app = {
         fetch("dev"),
         fetch("design"),
         fetch("photo", formatIntoRows),
-        fetch("about", extractAboutData)
+        fetch("about", extractAboutData),
+        fetch("exp")
       ]);
-      const [dev, design, photo, about] = data;
+      const [dev, design, photo, about, exp] = data;
       this.siteData = {
         dev,
         design,
         photo,
-        about
+        about,
+        exp
       };
       this.preloaded = true;
     },
