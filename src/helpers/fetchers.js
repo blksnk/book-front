@@ -50,6 +50,7 @@ export function loadImg(src, el, callback) {
     if (callback) {
       callback();
     }
+    // img.parentNode.removeChild(img);
   };
   const fallback = () => {
     img.onload = onload;
