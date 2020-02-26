@@ -105,7 +105,8 @@ export default {
         gsap.to(image, {
           y,
           x,
-          duration: this.tweenDuration * (index / 2 + 1)
+          duration: this.tweenDuration,
+          delay: this.tweenDuration * (index / 2)
         });
       });
     },
