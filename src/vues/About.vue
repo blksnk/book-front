@@ -1,7 +1,7 @@
 <template>
   <section id="about-page" ref="page">
     <div id="about-pres" ref="pres">
-      <h1 ref="title">well hello</h1>
+      <h1 ref="title">genmetsu means desillusion</h1>
       <text-element
         title="About me"
         :paragraphs="siteData.about.presentation"
@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import { initLS, wHeight } from "../helpers/layout.js";
+import { initLS, wHeight, wWidth, rem } from "../helpers/layout.js";
 import { throttle } from "@/helpers/math.js";
 import gsap, { Power2 } from "gsap";
 import TextElement from "../components/TextElement.vue";
@@ -171,7 +171,7 @@ export default {
       gsap.fromTo(
         this.$refs.title,
         {
-          x: "-100%"
+          x: -wWidth() - 6 * rem()
         },
         {
           x: 0,
@@ -216,14 +216,15 @@ export default {
   padding-left: var(--padding-horizontal);
   padding-right: var(--padding-horizontal);
   z-index: 2;
-  height: 100vh;
+  min-height: 100vh;
+  margin-bottom: 4rem;
 }
 
 #about-pres h1 {
   color: var(--white);
   width: calc(100vw - 12rem);
   margin-bottom: 4rem;
-  transform: translateX(-100%);
+  transform: translateX(-100% - var(--padding-horizontal));
 }
 
 #about-img {

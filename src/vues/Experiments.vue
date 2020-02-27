@@ -6,7 +6,7 @@
         :paragraphs="
           `
         I like to explore various concepts and design ideas during my free time. The easiest way for me to do so is by creating simple web pages, allowing me to efficiently put my ideas into practice.
-        You'll find  some of the experiments I've created over the past year.
+        You'll find some of the ideas I've come up with over the past year. I've recently taken a liking to experimenting with generative and random art.
         This list is regularly updated with new content.
       `
         "
@@ -19,6 +19,8 @@
         :href="exp.link"
         target="_blank"
         rel="noopener noreferrer"
+        v-on:mouseover="() => onHover(index)"
+        v-on:mouseleave="onLeave"
       >
         <h2 class="fill-hover">
           {{ exp.title }}
@@ -41,7 +43,7 @@
 
 <script>
 import { initLS, wHeight, wWidth, rem } from "@/helpers/layout.js";
-import gsap from "gsap";
+import gsap, { Power2 } from "gsap";
 import ImageLoader from "@/components/ImageLoader.vue";
 import TextElement from "@/components/TextElement.vue";
 export default {
@@ -79,7 +81,8 @@ export default {
     return {
       scroll: null,
       projects: [{ url: "@" }],
-      loadedCount: 0
+      loadedCount: 0,
+      images: []
     };
   },
   methods: {
@@ -90,23 +93,24 @@ export default {
       this.hideAllMeshesButOne(this.activeMesh);
       this.setActiveMeshAsTransparentWireframe();
       this.setCameraTo({
-        x: this.currentXOffset - 4,
-        y: 4,
-        z: 10
+        x: this.currentXOffset,
+        y: -3,
+        z: 16
       });
     },
     placeImages() {
-      const images = this.$refs.right.querySelectorAll(".exp-img");
-      images.forEach((image, index) => {
+      this.images = this.$refs.right.querySelectorAll(".exp-img");
+      this.images.forEach((image, index) => {
         const { height, width } = image.getBoundingClientRect();
-        const y = this.randomImgPos(height, wHeight(), 2 * rem(), 4 * rem());
-        const x = this.randomImgPos(width, wWidth() * 0.6);
+        const y = this.randomImgPos(height, wHeight(), 8 * rem(), 4 * rem());
+        const x = this.randomImgPos(width, wWidth() * 0.4);
         console.log(x, y);
         gsap.to(image, {
           y,
           x,
           duration: this.tweenDuration,
-          delay: this.tweenDuration * (index / 2)
+          delay: this.tweenDuration * (index / 2),
+          ease: Power2.easeOut
         });
       });
     },
@@ -116,20 +120,42 @@ export default {
       marginBottom = marginBottom ? marginBottom : 0;
       const val = Math.min(
         Math.max(parseInt(Math.random() * diff), marginTop),
-        w - marginBottom
+        diff - marginBottom
       );
       return val;
     },
     generateImgSize(index) {
-      if (index === 0) {
-        return "img-l";
-      } else {
-        if (parseInt(Math.round(Math.random()))) {
+      console.log(index);
+      const rand = parseInt(Math.round(Math.random() * 2));
+      switch (rand) {
+        case 0:
+          return "img-l";
+        case 1:
           return "img-m";
-        } else {
+        case 2:
           return "img-s";
-        }
       }
+    },
+    onHover(index) {
+      const activeImg = this.images[index];
+      const toFadeOut = Array.from(this.images).filter(
+        img => img !== activeImg
+      );
+      gsap.to(activeImg, {
+        opacity: 1,
+        duration: this.tweenDuration / 2
+      });
+
+      gsap.to(toFadeOut, {
+        opacity: 0,
+        duration: this.tweenDuration / 2
+      });
+    },
+    onLeave() {
+      gsap.to(this.images, {
+        opacity: 1,
+        duration: this.tweenDuration / 2
+      });
     }
   },
   watch: {
@@ -151,7 +177,7 @@ export default {
   width: 100%;
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 40% 60%;
+  grid-template-columns: 60% 40%;
   grid-template-rows: auto;
 }
 
@@ -161,7 +187,7 @@ export default {
   padding-top: calc(var(--padding-top) + 6rem);
   padding-left: var(--padding-horizontal);
   padding-right: 2rem;
-  padding-bottom: var(--padding-bottom);
+  padding-bottom: var(--padding-top);
 }
 
 #exp-left h2 {
@@ -181,17 +207,17 @@ export default {
 }
 
 .img-s {
-  width: calc(25vw);
-  height: calc(25vw);
+  width: calc(15vw);
+  height: calc(15vw);
 }
 
 .img-m {
-  width: calc(40vw);
-  height: calc(40vw / 4 * 3);
+  width: calc(30vw);
+  height: calc(30vw / 4 * 3);
 }
 
 .img-l {
-  width: calc(60vw);
-  height: calc(60vw / 16 * 9);
+  width: calc(40vw);
+  height: calc(40vw / 16 * 9);
 }
 </style>

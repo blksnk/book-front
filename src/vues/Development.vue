@@ -11,17 +11,19 @@
       />
     </div>
     <div id="dev-projects" data-scroll-section>
-      <h3 data-scroll data-scroll-speed="1">selected projects</h3>
-      <hr data-scroll data-scroll-speed="1" />
-      <h2
-        data-scroll
-        data-scroll-speed="2"
-        class="fill-hover cursor-pointer"
+      <h3>selected projects</h3>
+      <hr />
+      <a
         v-for="(project, index) in siteData.dev"
         :key="'dev-project-' + index"
+        :href="project.link"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-scroll
+        data-scroll-speed="2"
       >
-        {{ project.title }}
-      </h2>
+        <h2 class="fill-hover cursor-pointer">{{ project.title }}</h2>
+      </a>
     </div>
     <div id="dev-outro" data-scroll-section>
       <text-element
