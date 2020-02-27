@@ -207,17 +207,17 @@ export default {
 }
 
 .img-s {
-  width: calc(15vw);
-  height: calc(15vw);
+  width: calc(16vw);
+  height: calc(16vw);
 }
 
 .img-m {
-  width: calc(30vw);
-  height: calc(30vw / 4 * 3);
+  width: calc(28vw);
+  height: calc(28vw / 4 * 3);
 }
 
 .img-l {
-  width: calc(40vw);
-  height: calc(40vw / 16 * 9);
+  width: calc(34vw);
+  height: calc(44vw / 16 * 9);
 }
 </style>
