@@ -283,6 +283,7 @@ export default {
   grid-column: 2 / 5;
   grid-row: 1 / 5;
   pointer-events: all;
+  border-radius: 50vh;
 }
 
 .cursor-pause {

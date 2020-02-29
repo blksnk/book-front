@@ -52,6 +52,8 @@
       }"
       v-on:loaded="onPreloadingComplete"
     />
+
+    <WindowWarning v-if="windowTooSmall" />
   </main>
 </template>
 
@@ -68,6 +70,7 @@ import { degToRad } from "@/helpers/math.js";
 import GL from "@/components/GL.vue";
 import Loader from "@/components/Loader.vue";
 import Menu from "@/components/Menu.vue";
+import WindowWarning from "@/components/WindowWarning.vue";
 
 import CategoryWrapper from "@/components/CategoryWrapper.vue";
 import About from "@/vues/About.vue";
@@ -82,7 +85,8 @@ const app = {
   components: {
     GL,
     Menu,
-    Loader
+    Loader,
+    WindowWarning
   },
   router: new VueRouter({
     mode: "history",
@@ -144,6 +148,7 @@ const app = {
       tweenDuration: 0.7,
       loaded: false,
       preloaded: false,
+      windowTooSmall: false,
       gl: {
         cameraTo: {
           x: 14,
@@ -393,12 +398,23 @@ const app = {
         x: 0,
         z: 6
       });
+    },
+    checkWindowSize() {
+      if (window.innerWidth <= 750 && !this.windowTooSmall) {
+        this.windowTooSmall = true;
+      } else if (window.innerWidth > 750 && this.windowTooSmall) {
+        this.windowTooSmall = false;
+      }
     }
   },
   created() {
     this.addMeshesToScene(this.createMeshes());
     this.fetchSiteData();
     this.assignCorrectIndexOnSiteEnter();
+  },
+  mounted() {
+    this.checkWindowSize();
+    window.addEventListener("resize", this.checkWindowSize);
   }
 };
 
@@ -583,5 +599,29 @@ img {
 
 [data-align="center"] {
   align-self: center;
+}
+
+@media (max-width: 1100px) {
+  h1 {
+    font-size: 5rem;
+  }
+}
+
+@media (max-width: 900px) {
+  h1 {
+    font-size: 4rem;
+  }
+}
+
+@media (max-width: 750px) {
+  h1 {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 600px) {
+  h1 {
+    font-size: 2rem;
+  }
 }
 </style>
