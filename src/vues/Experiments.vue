@@ -127,6 +127,7 @@ export default {
     generateImgSize(index) {
       console.log(index);
       const rand = parseInt(Math.round(Math.random() * 2));
+      console.log(rand);
       switch (rand) {
         case 0:
           return "img-l";
@@ -212,12 +213,14 @@ export default {
 }
 
 .img-m {
-  width: calc(28vw);
-  height: calc(28vw / 4 * 3);
+  width: calc(24vw);
+  height: calc(24vw);
+  /* height: calc(28vw / 4 * 3); */
 }
 
 .img-l {
-  width: calc(34vw);
-  height: calc(44vw / 16 * 9);
+  width: calc(32vw);
+  height: calc(32vw);
+  /* height: calc(34vw / 16 * 9); */
 }
 </style>

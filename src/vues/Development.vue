@@ -115,8 +115,8 @@ export default {
 <style scoped>
 #dev-page {
   width: 100%;
-  padding-top: var(--padding-top);
-  padding-bottom: var(--padding-bottom);
+  padding-top: calc(var(--padding-top) + 6rem);
+  padding-bottom: calc(var(--padding-bottom) * 2);
   display: grid;
   grid-template-columns: 40% 60%;
   grid-auto-rows: max-content;

@@ -1,7 +1,10 @@
 <template>
   <section id="about-page" ref="page">
     <div id="about-pres" ref="pres">
-      <h1 ref="title">genmetsu means desillusion</h1>
+      <h1 ref="title">
+        genmetsu means<br />
+        disillusion
+      </h1>
       <text-element
         title="About me"
         :paragraphs="siteData.about.presentation"

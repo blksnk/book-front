@@ -12,6 +12,7 @@
           :src="project.thumbnail.url"
           :alt="titles[index].title"
           v-on:loaded="catchLoaded"
+          noAnimation
           v-bind:key="'design-project-thumbail-' + index"
         />
       </div>
