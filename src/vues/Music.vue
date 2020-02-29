@@ -174,7 +174,7 @@ export default {
     },
     onHoverEnter() {
       this.setCameraTo({
-        z: 5.5
+        z: 6.5
       });
     },
     onHoverLeave() {
