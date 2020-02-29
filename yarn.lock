@@ -7941,6 +7941,15 @@ vue-agile@^1.0.11:
   dependencies:
     vue "^2.6.10"
 
+vue-audio-visual@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/vue-audio-visual/-/vue-audio-visual-2.0.0.tgz#b47b02dc1c888b899accb0050157364799d32406"
+  integrity sha512-1f1BBrgsMW/KQlDrPLV+387BmV9UNvZbzPwZkxl1rSb0DIJ5JHwLGi+dAFFDAiDpu/ZMG5QcqkjFpxePPMUQag==
+  dependencies:
+    axios "^0.19.2"
+    core-js "^3.4.4"
+    vue "^2.6.10"
+
 vue-eslint-parser@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/vue-eslint-parser/-/vue-eslint-parser-5.0.0.tgz#00f4e4da94ec974b821a26ff0ed0f7a78402b8a1"

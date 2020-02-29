@@ -12,12 +12,12 @@ export const formatParagraphs = paragraph =>
 
 export const replaceEmDash = string => string.split("&mdash;").join("\u2014");
 
-export const getCurrentScrollY = el => {
+export function getCurrentScrollY(el) {
   const { y, top } = el.getBoundingClientRect();
   return Math.max(y, top);
-};
+}
 
-export const initLS = (el, listener) => {
+export function initLS(el, listener) {
   const ls = new locomotiveScroll({
     el,
     smooth: true,
@@ -29,4 +29,13 @@ export const initLS = (el, listener) => {
     ls.on("scroll", listener);
   }
   return ls;
-};
+}
+
+export function getPos(el) {
+  const pos = el.getBoundingClientRect();
+  return {
+    pos,
+    centerX: pos.width / 2 + pos.x,
+    centerY: pos.height / 2 + pos.y
+  };
+}

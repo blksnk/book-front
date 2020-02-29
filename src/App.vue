@@ -130,6 +130,7 @@ const app = {
         photo: [],
         design: [],
         dev: [],
+        music: [],
         exp: [],
         about: {
           presentation: "",
@@ -371,16 +372,18 @@ const app = {
         fetch("dev"),
         fetch("design"),
         fetch("photo", formatIntoRows),
-        fetch("about", extractAboutData),
-        fetch("exp")
+        fetch("music"),
+        fetch("exp"),
+        fetch("about", extractAboutData)
       ]);
-      const [dev, design, photo, about, exp] = data;
+      const [dev, design, photo, music, exp, about] = data;
       this.siteData = {
         dev,
         design,
         photo,
-        about,
-        exp
+        music,
+        exp,
+        about
       };
       this.preloaded = true;
     },

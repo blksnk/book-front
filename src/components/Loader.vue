@@ -33,8 +33,6 @@ export default {
   },
   methods: {
     loadingAnimation() {
-      console.log(this.preloaded);
-
       gsap.to(this.current, {
         number: 75,
         duration: this.tweenDuration * 3,
@@ -44,7 +42,6 @@ export default {
     },
     loadedAnimation() {
       if (this.preloaded) {
-        console.log(this.preloaded);
         gsap.killTweensOf(this.current, "number");
         gsap.to(this.current, {
           number: 100,

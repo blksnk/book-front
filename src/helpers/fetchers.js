@@ -7,7 +7,6 @@ export async function fetch(cat, formatFunction) {
       .get(process.env.VUE_APP_API_URL + url)
       .then(res => {
         if (formatFunction) {
-          console.log("formatFunction");
           return resolve(formatFunction(sortById(res.data)));
         } else {
           return resolve(sortById(res.data));
@@ -26,15 +25,14 @@ function getCatUrl(cat) {
       return "/dev-works";
     case "design":
       return "/design-works";
-    case "photo": {
+    case "photo":
       return "/photo-collections";
-    }
-    case "exp": {
+    case "exp":
       return "/experiments";
-    }
-    case "about": {
+    case "music":
+      return "/music";
+    case "about":
       return "/abouts";
-    }
   }
 }
 

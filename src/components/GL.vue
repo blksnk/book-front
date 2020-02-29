@@ -112,9 +112,20 @@ const gl = {
       const width = window.innerWidth;
       const height = window.innerHeight;
       this.renderer.setSize(width, height);
-      this.camera.aspect = width / height;
-      this.camera.updateProjectionMatrix();
+      this.sizeCamera();
       this.renderer.setPixelRatio(window.devicePixelRatio);
+    },
+    sizeCamera() {
+      const horizontalFov = 90;
+      const aspect = window.innerWidth / window.innerHeight;
+      const fov =
+        (Math.atan(Math.tan(((horizontalFov / 2) * Math.PI) / 180) / aspect) *
+          2 *
+          180) /
+        Math.PI;
+      this.camera.aspect = aspect;
+      this.camera.fov = fov;
+      this.camera.updateProjectionMatrix();
     },
     animate() {
       this.frameId = requestAnimationFrame(this.animate);
