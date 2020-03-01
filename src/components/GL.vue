@@ -5,6 +5,9 @@
 <script>
 import CategoryWrapper from "./CategoryWrapper.vue";
 import * as THREE from "three";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 
 const gl = {
   name: "GL",
@@ -81,7 +84,10 @@ const gl = {
       meshes: [],
       container: null,
       frameId: null,
-      controls: null
+      controls: null,
+      composer: null,
+      renderPass: null,
+      counter: 0.0
     };
   },
   methods: {
@@ -105,13 +111,36 @@ const gl = {
       this.camera.position.z = 16;
       this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       this.renderer.setClearColor(0x000000, 0);
-      this.sizeRenderer();
       this.container.appendChild(this.renderer.domElement);
+      this.composer = new EffectComposer(this.renderer);
+      this.renderPass = new RenderPass(this.gl.scene, this.camera);
+      this.composer.addPass(this.renderPass);
+
+      //custom shader pass
+      const vertShader = document.getElementById("vertexShader").textContent;
+      const fragShader = document.getElementById("fragmentShader").textContent;
+      var noiseShader = {
+        uniforms: {
+          tDiffuse: { value: 1 },
+          amount: { value: this.counter }
+        },
+        vertexShader: vertShader,
+        fragmentShader: fragShader
+      };
+      let customPass = new ShaderPass(noiseShader);
+      console.log(customPass);
+      customPass.renderToScreen = true;
+      this.composer.addPass(customPass);
+      this.sizeRenderer();
+
+      //render loop
+      this.animate(customPass);
     },
     sizeRenderer() {
       const width = window.innerWidth;
       const height = window.innerHeight;
       this.renderer.setSize(width, height);
+      this.composer.setSize(width, height);
       this.sizeCamera();
       this.renderer.setPixelRatio(window.devicePixelRatio);
     },
@@ -127,13 +156,17 @@ const gl = {
       this.camera.fov = fov;
       this.camera.updateProjectionMatrix();
     },
-    animate() {
-      this.frameId = requestAnimationFrame(this.animate);
+    animate(customPass) {
       this.rotateMeshes();
-
       this.moveCameraAxis(this.gl.cameraTo);
       this.redirectWhenAnimationDone();
-      this.renderer.render(this.gl.scene, this.camera);
+
+      this.counter += 0.01;
+      customPass.uniforms["amount"].value = this.counter;
+
+      this.frameId = requestAnimationFrame(() => this.animate(customPass));
+      // this.renderer.render(this.gl.scene, this.camera);
+      this.composer.render();
     },
     rotateMeshes() {
       this.gl.meshes.forEach(mesh => {
@@ -201,7 +234,6 @@ const gl = {
   mounted() {
     this.init();
     window.addEventListener("resize", this.sizeRenderer);
-    this.animate();
   },
   beforeDestroy() {
     this.clearGLAssets();

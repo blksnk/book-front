@@ -53,6 +53,7 @@
             'cursor-pause': index === currentTrackIndex && !isPaused
           }"
           @click="selectTrackTitleClick(index)"
+          @mouseover="onHoverEnter(index)"
         >
           {{ track.title }}
         </h1>
@@ -155,7 +156,6 @@ export default {
       }
     },
     selectTrackTitleClick(index) {
-      console.log("runs");
       if (index < this.currentTrackIndex) {
         this.selectTrack("prev");
       } else if (index > this.currentTrackIndex) {
@@ -187,10 +187,18 @@ export default {
         }
       });
     },
-    onHoverEnter() {
-      this.setCameraTo({
-        z: 6.5
-      });
+    onHoverEnter(index) {
+      if (typeof index === "number") {
+        if (index === this.currentTrackIndex) {
+          this.setCameraTo({
+            z: 6.5
+          });
+        }
+      } else {
+        this.setCameraTo({
+          z: 6.5
+        });
+      }
     },
     onHoverLeave() {
       this.setCameraTo({
