@@ -10,7 +10,7 @@
         :bar-length="4 * rem"
         :playtime="false"
         :rotate-graph="false"
-        :fft-size="parseInt(Math.pow(2, 9))"
+        :fft-size="parseInt(Math.pow(2, 10))"
         line-color="#FFFFFF"
         progress-color="#FFFFFF"
         bar-color="#FFFFFF"
@@ -46,8 +46,13 @@
           :key="'music-title-' + index"
           :class="{
             'music-title': true,
-            current: index === currentTrackIndex
+            current: index === currentTrackIndex,
+            'cursor-prev': index < currentTrackIndex,
+            'cursor-next': index > currentTrackIndex,
+            'cursor-play': index === currentTrackIndex && isPaused,
+            'cursor-pause': index === currentTrackIndex && !isPaused
           }"
+          @click="selectTrackTitleClick(index)"
         >
           {{ track.title }}
         </h1>
@@ -65,7 +70,7 @@
         id="music-area"
         @mouseover="onHoverEnter"
         @mouseleave="onHoverLeave"
-        @click="onClick"
+        @click="playPause"
         :class="isPaused ? 'cursor-play' : 'cursor-pause'"
       ></div>
     </div>
@@ -149,6 +154,16 @@ export default {
         this.isPaused = false;
       }
     },
+    selectTrackTitleClick(index) {
+      console.log("runs");
+      if (index < this.currentTrackIndex) {
+        this.selectTrack("prev");
+      } else if (index > this.currentTrackIndex) {
+        this.selectTrack("next");
+      } else if (index === this.currentTrackIndex) {
+        this.playPause();
+      }
+    },
     slideTitles(next) {
       this.sliding = true;
 
@@ -181,9 +196,6 @@ export default {
       this.setCameraTo({
         z: 6
       });
-    },
-    onClick() {
-      this.playPause();
     },
     playPause() {
       const { audio } = this.$refs;
@@ -253,13 +265,15 @@ export default {
   align-items: center;
   justify-items: start;
   grid-gap: 14rem;
+  pointer-events: all;
 }
 
 .music-title {
   grid-row: 1 / 1;
+  pointer-events: all;
 }
 
-.music-title.current {
+.current {
   color: var(--white);
 }
 
@@ -292,5 +306,13 @@ export default {
 
 .cursor-play {
   cursor: url("../assets/icons/play-sharp.svg") 32 32, auto;
+}
+
+.cursor-next {
+  cursor: url("../assets/icons/chevron-forward-sharp.svg") 32 32, auto;
+}
+
+.cursor-prev {
+  cursor: url("../assets/icons/chevron-back-sharp.svg") 32 32, auto;
 }
 </style>
