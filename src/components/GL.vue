@@ -87,6 +87,7 @@ const gl = {
       controls: null,
       composer: null,
       renderPass: null,
+      customPass: null,
       counter: 0.0
     };
   },
@@ -127,14 +128,13 @@ const gl = {
         vertexShader: vertShader,
         fragmentShader: fragShader
       };
-      let customPass = new ShaderPass(noiseShader);
-      console.log(customPass);
-      customPass.renderToScreen = true;
-      this.composer.addPass(customPass);
+      this.customPass = new ShaderPass(noiseShader);
+      this.customPass.renderToScreen = true;
+      this.composer.addPass(this.customPass);
       this.sizeRenderer();
 
       //render loop
-      this.animate(customPass);
+      this.animate();
     },
     sizeRenderer() {
       const width = window.innerWidth;
@@ -156,15 +156,15 @@ const gl = {
       this.camera.fov = fov;
       this.camera.updateProjectionMatrix();
     },
-    animate(customPass) {
+    animate() {
       this.rotateMeshes();
       this.moveCameraAxis(this.gl.cameraTo);
       this.redirectWhenAnimationDone();
 
       this.counter += 0.01;
-      customPass.uniforms["amount"].value = this.counter;
+      this.customPass.uniforms["amount"].value = this.counter;
 
-      this.frameId = requestAnimationFrame(() => this.animate(customPass));
+      this.frameId = requestAnimationFrame(this.animate);
       // this.renderer.render(this.gl.scene, this.camera);
       this.composer.render();
     },
