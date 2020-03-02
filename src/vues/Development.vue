@@ -4,9 +4,9 @@
       <text-element
         title="Overview"
         :paragraphs="
-          `Lorem ipsum ad anim pariatur labore irure consequat in sed ullamco elit culpa magna ad culpa reprehenderit mollit deserunt in cupidatat amet exercitation magna eiusmod dolore eiusmod.
-
-        Mollit ut irure irure sit duis nulla labore adipisicing magna amet sit reprehenderit ut sint sint.`
+          `Since the bootcamp I undertook at IronHack in winter 2018, I have worked for and with various clients and made quite some websites.
+          Here's a list of some of my favorites.
+          `
         "
       />
     </div>
