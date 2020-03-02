@@ -424,7 +424,7 @@ export default app;
 <style>
 * {
   box-sizing: border-box;
-  --white: #ffffff;
+  --white: #fff;
   --black: #000;
   --dark-grey: #4a4a4a;
   --light-grey: #b7b7b7;
@@ -439,6 +439,12 @@ export default app;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  cursor: url("./assets/icons/cursor-normal.svg") 8 8, auto;
+}
+
+.cursor-pointer,
+.cursor-pointer * {
+  cursor: url("./assets/icons/cursor-pointer.svg") 16 16, auto !important;
 }
 
 *:focus {
@@ -555,10 +561,6 @@ img {
 
 .fill-hover:hover {
   color: var(--white);
-}
-
-.cursor-pointer {
-  cursor: pointer;
 }
 
 .fade-enter-active {

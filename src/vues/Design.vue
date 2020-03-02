@@ -27,6 +27,7 @@
           v-for="(title, index) in titles"
           :class="{
             'design-project-title': true,
+            'cursor-pointer': true,
             selected: index === selectedIndex
           }"
           :data-text="title"
@@ -108,7 +109,8 @@ export default {
       scrollY: 0,
       lockInput: true,
       cHeight: 0,
-      loadedCount: 0
+      loadedCount: 0,
+      resumed: false
     };
   },
   computed: {
@@ -159,7 +161,7 @@ export default {
     },
     closeProject() {
       this.selectionMade = false;
-      this.$nextTick(this.transitionResume);
+      this.resumed = true;
     },
     transitionResume() {
       this.scrollToImg(this.selectedIndex, 0);
@@ -237,6 +239,7 @@ export default {
         ease: Power2.easeIn,
         onComplete: () => {
           this.selectionMade = true;
+          this.loadedCount = 0;
         }
       });
     },
@@ -259,12 +262,6 @@ export default {
     },
     catchLoaded() {
       this.loadedCount++;
-      if (this.loadedCount === this.projectCount) {
-        this.setupGL();
-        this.$nextTick(() => {
-          this.transitionIn();
-        });
-      }
     },
     scrollToImg(index, duration) {
       if (!duration) {
@@ -308,6 +305,19 @@ export default {
       .getComputedStyle(this.$refs.container)
       .getPropertyValue("height")
       .split("px")[0];
+  },
+  watch: {
+    loadedCount(next) {
+      if (next === this.projectCount) {
+        this.setupGL();
+        if (this.resumed) {
+          this.resumed = false;
+          this.$nextTick(this.transitionResume);
+        } else {
+          this.$nextTick(this.transitionIn);
+        }
+      }
+    }
   }
 };
 </script>
@@ -339,7 +349,6 @@ export default {
   text-align: left;
   transition: color 0.1s;
   z-index: 22;
-  cursor: pointer;
 }
 
 .design-project-title.selected {

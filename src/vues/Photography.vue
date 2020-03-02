@@ -15,7 +15,7 @@
           :src="image.thumbnail.url"
           v-on:loaded="() => catchLoad(selectionMade ? onPageResume : onLoaded)"
           :click="() => selectCollection(rowIndex, index)"
-          class="photo-item"
+          class="photo-item cursor-pointer"
           data-scroll
           data-scroll-speed="0"
         />

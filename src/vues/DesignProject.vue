@@ -77,13 +77,13 @@
           data-scroll-offset="-100%"
         >
           <button
-            class="design-project-navigation-btn"
+            class="design-project-navigation-btn cursor-pointer"
             v-on:click="e => navigate('prev')"
           >
             <h2>prev</h2>
           </button>
           <button
-            class="design-project-navigation-btn"
+            class="design-project-navigation-btn cursor-pointer"
             v-on:click="e => navigate('next')"
           >
             <h2>next</h2>
@@ -95,7 +95,7 @@
       <div>
         <transition name="fade">
           <button
-            class="hover-underline"
+            class="hover-underline  cursor-pointer"
             v-if="
               !projectTransition && scrolled && !scrolledEnd && listLength > 1
             "
@@ -106,7 +106,7 @@
         </transition>
         <transition name="fade">
           <button
-            class="hover-underline"
+            class="hover-underline cursor-pointer"
             v-if="
               !projectTransition && scrolled && !scrolledEnd && listLength > 1
             "
@@ -120,7 +120,7 @@
       <div>
         <transition name="fade">
           <button
-            class="hover-underline"
+            class="hover-underline cursor-pointer"
             v-if="scrolled"
             v-on:click="scrollToTop"
           >
@@ -128,7 +128,7 @@
           </button>
         </transition>
 
-        <button class="hover-underline" v-on:click="close">
+        <button class="hover-underline cursor-pointer" v-on:click="close">
           .close project
         </button>
       </div>
@@ -412,7 +412,6 @@ export default {
   padding: 2rem;
   border: none;
   background: none;
-  cursor: pointer;
 }
 
 .design-project-navigation-btn h2 {

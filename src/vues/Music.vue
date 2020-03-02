@@ -36,7 +36,7 @@
         id="music-btn-prev"
         @click="selectTrack('prev')"
       >
-        <h2 class="fill-hover">prev</h2>
+        <h2 class="fill-hover cursor-pointer">prev</h2>
       </button>
 
       <div id="music-title-slider" ref="slider">
@@ -64,7 +64,7 @@
         id="music-btn-next"
         @click="selectTrack('next')"
       >
-        <h2 class="fill-hover">next</h2>
+        <h2 class="fill-hover cursor-pointer">next</h2>
       </button>
 
       <div
@@ -75,8 +75,6 @@
         :class="isPaused ? 'cursor-play' : 'cursor-pause'"
       ></div>
     </div>
-
-    <div id="music-btm-container"></div>
   </section>
 </template>
 

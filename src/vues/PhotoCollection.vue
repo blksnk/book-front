@@ -59,10 +59,16 @@
               </div>
             </agile>
             <div id="carousel-btns">
-              <button @click="$refs.mainCarousel.goToPrev()">
+              <button
+                @click="$refs.mainCarousel.goToPrev()"
+                class="cursor-pointer"
+              >
                 <ion-icon name="chevron-back-sharp"></ion-icon>
               </button>
-              <button @click="$refs.mainCarousel.goToNext()">
+              <button
+                @click="$refs.mainCarousel.goToNext()"
+                class="cursor-pointer"
+              >
                 <ion-icon name="chevron-forward-sharp"></ion-icon>
               </button>
             </div>
@@ -81,7 +87,7 @@
         <transition name="fade">
           <button
             v-if="!scrolled"
-            class="hover-underline"
+            class="hover-underline cursor-pointer"
             id="scrollDownBtn"
             @click="scrollDown"
           >
@@ -92,7 +98,11 @@
 
       <transition name="fade">
         <div>
-          <button class="hover-underline" id="closeBtn" @click="transitionOut">
+          <button
+            class="hover-underline  cursor-pointer"
+            id="closeBtn"
+            @click="transitionOut"
+          >
             .close collection
           </button>
         </div>
@@ -143,21 +153,15 @@ export default {
         dots: false,
         navButtons: false,
         fade: true,
-        timing: "ease-in-out",
-        pauseOnHover: true,
-        pauseOnDotsHover: true
+        timing: "ease-in-out"
       },
       options2: {
-        autoplay: true,
         timing: "ease-in-out",
-        autoplaySpeed: 7000,
         centerMode: true,
         infinite: true,
         dots: false,
         navButtons: false,
         slidesToShow: 3,
-        pauseOnHover: true,
-        pauseOnDotsHover: true,
         responsive: [
           {
             breakpoint: 600,
@@ -357,13 +361,21 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  filter: grayscale(1);
 }
 
 #thumbnail-carousel {
   height: 100%;
   width: 75%;
   flex: 0.75;
+}
+
+#thumbnail-carousel img {
+  filter: grayscale(1);
+  transition: 0.3s filter;
+}
+
+#thumbnail-carousel img:hover {
+  filter: grayscale(0.3);
 }
 
 #carousel-btns {
@@ -380,10 +392,12 @@ export default {
   width: 50%;
   flex: 1;
   border: none;
+  transition: 0.3s background-color;
 }
 
 #carousel-btns button:hover {
-  filter: invert(1);
+  /* filter: invert(1); */
+  background-color: rgba(40, 40, 40, 0.6);
 }
 
 #carousel-btns ion-icon {
@@ -394,7 +408,7 @@ export default {
 }
 
 #carousel-btns button:hover ion-icon {
-  color: var(--dark-grey);
+  color: var(--light-grey);
 }
 
 #photo-collec-view-right {

@@ -18,6 +18,7 @@
         :key="'exp-link' + index"
         :href="exp.link"
         target="_blank"
+        class="cursor-pointer"
         rel="noopener noreferrer"
         v-on:mouseover="() => onHover(index)"
         v-on:mouseleave="onLeave"

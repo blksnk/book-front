@@ -2,6 +2,7 @@
   <h1
     :class="{
       'category-title': true,
+      'cursor-pointer': true,
       hide,
       active
     }"
@@ -25,7 +26,6 @@ export default {
 }
 
 .category-title {
-  cursor: pointer;
   pointer-events: all;
   transition: color 0.1s;
 }

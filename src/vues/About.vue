@@ -45,31 +45,31 @@
       <h3>contact information</h3>
       <hr />
       <a href="mailto:hello@veigel.dev">
-        <h2 class="fill-hover">hello@veigel.dev</h2>
+        <h2 class="fill-hover cursor-pointer">hello@veigel.dev</h2>
       </a>
       <a href="tel:+33658238758">
-        <h2 class="fill-hover">+33 6 58 23 87 58</h2>
+        <h2 class="fill-hover cursor-pointer">+33 6 58 23 87 58</h2>
       </a>
       <a
         target="_blank"
         rel="noopener noreferrer"
         href="https://instagram.com/chxmpetre"
       >
-        <h2 class="fill-hover">insta /chxmpetre</h2>
+        <h2 class="fill-hover cursor-pointer">instagram</h2>
       </a>
       <a
         target="_blank"
         rel="noopener noreferrer"
         href="https://github.com/blksnk"
       >
-        <h2 class="fill-hover">github /blksnk</h2>
+        <h2 class="fill-hover cursor-pointer">github</h2>
       </a>
       <a
         target="_blank"
         rel="noopener noreferrer"
         href="https://linkedin.com/in/jn-veigel"
       >
-        <h2 class="fill-hover">linkedin /jnveigel</h2>
+        <h2 class="fill-hover cursor-pointer">linkedin</h2>
       </a>
     </div>
   </section>

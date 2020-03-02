@@ -6,7 +6,8 @@
         <a
           :class="{
             active: activeLink === '/',
-            'hover-underline': true
+            'hover-underline': true,
+            'cursor-pointer': true
           }"
           v-on:click="e => transitionOut(e, '/', false)"
           to="/"
@@ -15,6 +16,7 @@
         <a
           :class="{
             active: activeLink == '/about',
+            'cursor-pointer': true,
             'hover-underline': true
           }"
           v-on:click="e => transitionOut(e, '/about', false)"
@@ -166,11 +168,9 @@ a,
   text-decoration: none;
   mix-blend-mode: difference;
   position: relative;
-  cursor: pointer;
   margin-bottom: 0.5rem;
 }
 
 #top-nav-title {
-  cursor: default;
 }
 </style>

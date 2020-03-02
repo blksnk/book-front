@@ -37,7 +37,7 @@
 
       <a
         id="dev-link"
-        class="hover-underline"
+        class="hover-underline cursor-pointer"
         href="https://veigel.dev"
         target="_blank"
         rel="noopener noreferrer"
