@@ -38,6 +38,7 @@
       <text-element
         title="Inspiration"
         :paragraphs="siteData.about.inspiration"
+        :links="siteData.about.inspirationLinks"
       />
     </div>
 

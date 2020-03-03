@@ -1,5 +1,5 @@
 <template>
-  <section id="music-page">
+  <section id="music-page" ref="page">
     <div id="music-visual">
       <av-circle
         :line-width="1"
@@ -162,6 +162,16 @@ export default {
         this.playPause();
       }
     },
+    selectTrackOnKey(e) {
+      console.log(e);
+      if (e.code === "Space") {
+        this.playPause();
+      } else if (e.code === "ArrowRight") {
+        this.selectTrack("next");
+      } else if (e.code === "ArrowLeft") {
+        this.selectTrack("prev");
+      }
+    },
     slideTitles(next) {
       this.sliding = true;
 
@@ -221,6 +231,11 @@ export default {
     this.setupGL();
     this.$nextTick(this.initSlider);
     window.addEventListener("resize", this.initSlider);
+    window.addEventListener("keydown", this.selectTrackOnKey);
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.initSlider);
+    window.removeEventListener("keydown", this.selectTrackOnKey);
   }
 };
 </script>
@@ -307,18 +322,18 @@ export default {
 }
 
 .cursor-pause {
-  cursor: url("../assets/icons/pause-sharp.svg") 32 32, auto;
+  cursor: url("../assets/icons/pause-sharp.svg") 16 16, auto;
 }
 
 .cursor-play {
-  cursor: url("../assets/icons/play-sharp.svg") 32 32, auto;
+  cursor: url("../assets/icons/play-sharp.svg") 16 16, auto;
 }
 
 .cursor-next {
-  cursor: url("../assets/icons/chevron-forward-sharp.svg") 32 32, auto;
+  cursor: url("../assets/icons/chevron-forward-sharp.svg") 16 16, auto;
 }
 
 .cursor-prev {
-  cursor: url("../assets/icons/chevron-back-sharp.svg") 32 32, auto;
+  cursor: url("../assets/icons/chevron-back-sharp.svg") 16 16, auto;
 }
 </style>

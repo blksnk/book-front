@@ -142,7 +142,49 @@ const app = {
           experience: "",
           skills: "",
           inspiration: "",
-          thumbnail: null
+          thumbnail: null,
+          inspirationLinks: [
+            {
+              title: "Felipe Pantone",
+              url: "https://www.instagram.com/felipepantone/?hl=fr"
+            },
+            {
+              title: "Ghostemane",
+              url: "https://www.instagram.com/ghostemane/?hl=fr"
+            },
+            {
+              title: "Graeme Swinton",
+              url: "https://actuallystudio.co.uk/"
+            },
+            {
+              title: "$uicideBoy$",
+              url: "https://www.instagram.com/suicideboys6/"
+            },
+            {
+              title: "Eliott Grunewald",
+              url: "https://www.instagram.com/eliottgrunewald/"
+            },
+            {
+              title: "Julien Gadachoat",
+              url: "https://www.instagram.com/julienv3ga/"
+            },
+            {
+              title: "polygon1993",
+              url: "https://www.instagram.com/polygon1993/"
+            },
+            {
+              title: "Pierre Châtel-Innocenti",
+              url: "https://www.chatel-photo.fr"
+            },
+            {
+              title: "Aristide Benoist",
+              url: "https://www.aristidebenoist.com/"
+            },
+            {
+              title: "Charliedelaforet",
+              url: "https://www.instagram.com/charliedelaforet"
+            }
+          ]
         }
       },
       tweenDuration: 0.7,
@@ -388,7 +430,10 @@ const app = {
         photo,
         music,
         exp,
-        about
+        about: {
+          ...this.siteData.about,
+          ...about
+        }
       };
       this.preloaded = true;
     },

@@ -14,6 +14,26 @@
         </p>
       </div>
     </transition>
+    <transition name="fade">
+      <div v-if="links" class="text-element-link-container">
+        <span
+          v-for="(link, index) in links"
+          :key="'text-element-link-' + index"
+        >
+          <a
+            class="text-element-link hover-underline cursor-pointer"
+            :href="link.url"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {{ link.title }}
+          </a>
+          <span v-if="index < links.length - 1" class="text-element-link-mdash">
+            &mdash;
+          </span>
+        </span>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -32,6 +52,9 @@ export default {
       default: `Dolore commodo non ullamco dolore dolor sed cillum aliquip occaecat qui proident enim laborum irure irure dolor cupidatat in duis ut aliqua esse veniam dolor irure in labore id cupidatat adipisicing minim amet quis ut ad minim velit.
 
         Lorem ipsum culpa sunt non veniam consequat non voluptate nulla est incididunt.`
+    },
+    links: {
+      type: Array
     },
     speed: {
       type: Number,
@@ -58,7 +81,7 @@ export default {
 
 .text-element-title {
   color: var(--white);
-  font-weight: 800;
+  font-weight: 700;
   font-size: var(--font-size-small);
   grid-column: 1 / 1;
   z-index: 5;
@@ -79,5 +102,26 @@ export default {
 
 .text-element-paragraph:last-child {
   margin-bottom: 0;
+}
+
+.text-element-link-container {
+  margin-top: 1rem;
+  grid-column: 2 / 2;
+}
+
+.text-element-link {
+  display: inline-block;
+  color: var(--white);
+  font-weight: 600;
+  font-size: var(--font-size-small);
+  z-index: 5;
+}
+
+.text-element-link-mdash {
+  display: inline-block;
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  color: var(--light-grey);
+  margin: 0 0.2rem;
 }
 </style>
