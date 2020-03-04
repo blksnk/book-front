@@ -1,7 +1,17 @@
 <template>
   <fragment>
     <nav id="top-nav">
-      <span id="top-nav-title">genmetsu.</span>
+      <span id="top-nav-title">
+        <a
+          :class="{
+            'hover-underline': true,
+            'cursor-pointer': true
+          }"
+          v-on:click="e => transitionOut(e, '/', false)"
+          to="/"
+          >genmetsu.</a
+        >
+      </span>
       <span id="top-nav-right">
         <a
           :class="{

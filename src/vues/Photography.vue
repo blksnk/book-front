@@ -7,18 +7,23 @@
         v-bind:key="'photo-row-' + rowIndex"
         data-scroll-section
       >
-        <image-loader
+        <div
           v-for="(image, index) in row"
           :key="`row-image-${rowIndex}-${index}`"
-          :rowIndex="rowIndex"
-          :imageIndex="index"
-          :src="image.thumbnail.url"
-          v-on:loaded="() => catchLoad(selectionMade ? onPageResume : onLoaded)"
-          :click="() => selectCollection(rowIndex, index)"
           class="photo-item cursor-pointer"
           data-scroll
           data-scroll-speed="0"
-        />
+        >
+          <image-loader
+            :rowIndex="rowIndex"
+            :imageIndex="index"
+            :src="image.thumbnail.url"
+            v-on:loaded="
+              () => catchLoad(selectionMade ? onPageResume : onLoaded)
+            "
+            :click="() => selectCollection(rowIndex, index)"
+          />
+        </div>
       </div>
     </div>
     <photo-collection
@@ -187,14 +192,22 @@ export default {
 
 .photo-item {
   height: calc(100vh - 24rem);
-  object-fit: cover;
   width: 100%;
-  cursor: pointer;
-  transition: 0.3s filter;
+  overflow: hidden;
 }
 
-.photo-item:hover {
+.photo-item img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  filter: brightness(1);
+  transition-duration: 0.3s;
+  transition-timing-function: ease-in-out;
+}
+
+.photo-item:hover img {
   filter: brightness(0.8);
+  transform: scale(1.05, 1.05);
 }
 
 .photo-item:nth-child(odd) {
