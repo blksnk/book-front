@@ -236,7 +236,7 @@ export default {
   width: 100%;
   grid-column: 3 / 6;
   z-index: 1;
-  filter: grayscale(1);
+  filter: saturate(1.2);
 }
 
 .about-info {
