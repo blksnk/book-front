@@ -11,7 +11,7 @@
     "axios": "^0.19.2",
     "core-js": "^3.4.4",
     "dotenv": "^8.2.0",
-    "gsap": "^3.1.1",
+    "gsap": "^3.6.0",
     "locomotive-scroll": "^3.2.10",
     "normalize.css": "^8.0.1",
     "paper": "^0.12.4",
